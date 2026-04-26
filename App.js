@@ -207,26 +207,155 @@ const ESSENTIAL_FIELDS = [
   'canton', 'marital_status', 'num_children', 'age', 'church_member', 'nationality'
 ];
 
+const FIELD_PATTERNS = {
+  canton: /\b(zurich|zürich|bern|berne|luzern|lucerne|uri|schwyz|obwalden|nidwalden|glarus|zug|fribourg|freiburg|solothurn|soleure|basel|baselland|schaffhausen|schaffhouse|appenzell|st\.?\s*gallen|graubünden|grisons|aargau|argovie|thurgau|thurgovie|ticino|tessin|vaud|waadt|valais|wallis|neuchâtel|neuenburg|genève|genf|geneva|jura)\b/,
+  marital_status: /\b(married|single|divorced|widowed|separated|marié|mariée|célibataire|divorcé|divorcée|veuf|veuve|séparé|séparée|verheiratet|ledig|geschieden|verwitwet|getrennt|sposato|sposata|celibe|nubile|divorziato|divorziata|vedovo|vedova)\b/,
+  num_children: /\b(\d+)\s*(child|children|kid|kids|enfant|enfants|kinder|kind|figli|figlio|figlia)\b|\b(no\s+children|sans\s+enfants?|keine\s+kinder|senza\s+figli)\b|\b([0-9])\b/,
+  age: /\b(\d{1,3})\s*(years?\s*old|ans|jahre?\s*alt|anni)\b|\bage[d:]?\s*(\d{1,3})\b|\bâgée?\s*de\s*\d{1,3}\b|\b([1-9]\d)\b/,
+  church_member: /\b(church\s*member|not\s*a?\s*church\s*member|membre\s*d[e']\s*(l['']\s*)?[eé]glise|pas\s*(de\s*)?membre|kirchenmitglied|kein\s*kirchenmitglied|membro\s*della\s*chiesa|non\s*membro|catholic|catholique|katholisch|cattolico|cattolica|protestant|protestante|evangelisch|réformée?|reformiert|reformed|orthodox|orthodoxe|atheist|athée?|no\s*religion|sans\s*religion|konfessionslos|keine\s*religion|senza\s*religione|agnostic|agnostique)\b/,
+  nationality: /\b(swiss|suisse|schweizer|svizzero|svizzera|french|français|française|german|deutsch|deutsche|italian|italiano|italiana|austrian|autrichien|autrichienne|portuguese|portugais|portugaise|spanish|espagnol|espagnole|british|american|türk|türkisch|belgian|belge|belgisch|dutch|néerlandais|néerlandaise|niederländisch|luxembourgish|luxembourgeois|luxembourgeoise|serbian|serbe|serbisch|croatian|croate|kroatisch|kosovan|kosovar|albanian|albanais|albanaise|albanisch|polish|polonais|polonaise|polnisch|romanian|roumain|roumaine|rumänisch|russian|russe|russisch|chinese|chinois|chinoise|chinesisch|indian|indien|indienne|indisch|brazilian|brésilien|brésilienne|brasilianisch|japanese|japonais|japonaise|japanisch|korean|coréen|coréenne|koreanisch|african|africain|africaine|afrikanisch|eritrean|érythréen|érythréenne|eritreisch|syrian|syrien|syrienne|syrisch|afghan|afghane|afghanisch|iraqi|irakien|irakienne|irakisch|iranian|iranien|iranienne|iranisch|nationality|nationalité|staatsangehörigkeit|nazionalità)\b/
+};
+
+const NUMERIC_FIELDS = ['age', 'num_children'];
+
 // Scans conversation text to find which essential fields are still missing
 function inferMissingEssentialFields(data, conversationText) {
   const text = conversationText.toLowerCase();
+  return ESSENTIAL_FIELDS.filter(f => !FIELD_PATTERNS[f].test(text));
+}
 
-  const cantonPatterns = /\b(zurich|zürich|bern|berne|luzern|lucerne|uri|schwyz|obwalden|nidwalden|glarus|zug|fribourg|freiburg|solothurn|soleure|basel|baselland|schaffhausen|schaffhouse|appenzell|st\.?\s*gallen|graubünden|grisons|aargau|argovie|thurgau|thurgovie|ticino|tessin|vaud|waadt|valais|wallis|neuchâtel|neuenburg|genève|genf|geneva|jura)\b/;
-  const maritalPatterns = /\b(married|single|divorced|widowed|separated|marié|mariée|célibataire|divorcé|divorcée|veuf|veuve|séparé|séparée|verheiratet|ledig|geschieden|verwitwet|getrennt|sposato|sposata|celibe|nubile|divorziato|divorziata|vedovo|vedova)\b/;
-  const childrenPatterns = /\b(\d+)\s*(child|children|kid|kids|enfant|enfants|kinder|kind|figli|figlio|figlia)\b|\b(no\s+children|sans\s+enfants?|keine\s+kinder|senza\s+figli)\b|\b([0-9])\b/;
-  const agePatterns = /\b(\d{1,3})\s*(years?\s*old|ans|jahre?\s*alt|anni)\b|\bage[d:]?\s*(\d{1,3})\b|\bâgée?\s*de\s*\d{1,3}\b|\b([1-9]\d)\b/;
-  const churchPatterns = /\b(church\s*member|not\s*a?\s*church\s*member|membre\s*d[e']\s*(l['']\s*)?[eé]glise|pas\s*(de\s*)?membre|kirchenmitglied|kein\s*kirchenmitglied|membro\s*della\s*chiesa|non\s*membro|catholic|catholique|katholisch|cattolico|cattolica|protestant|protestante|evangelisch|réformée?|reformiert|reformed|orthodox|orthodoxe|atheist|athée?|no\s*religion|sans\s*religion|konfessionslos|keine\s*religion|senza\s*religione|agnostic|agnostique)\b/;
-  const nationalityPatterns = /\b(swiss|suisse|schweizer|svizzero|svizzera|french|français|française|german|deutsch|deutsche|italian|italiano|italiana|austrian|autrichien|autrichienne|portuguese|portugais|portugaise|spanish|espagnol|espagnole|british|american|türk|türkisch|belgian|belge|belgisch|dutch|néerlandais|néerlandaise|niederländisch|luxembourgish|luxembourgeois|luxembourgeoise|serbian|serbe|serbisch|croatian|croate|kroatisch|kosovan|kosovar|albanian|albanais|albanaise|albanisch|polish|polonais|polonaise|polnisch|romanian|roumain|roumaine|rumänisch|russian|russe|russisch|chinese|chinois|chinoise|chinesisch|indian|indien|indienne|indisch|brazilian|brésilien|brésilienne|brasilianisch|japanese|japonais|japonaise|japanisch|korean|coréen|coréenne|koreanisch|african|africain|africaine|afrikanisch|eritrean|érythréen|érythréenne|eritreisch|syrian|syrien|syrienne|syrisch|afghan|afghane|afghanisch|iraqi|irakien|irakienne|irakisch|iranian|iranien|iranienne|iranisch|nationality|nationalité|staatsangehörigkeit|nazionalità)\b/;
+function canonicalize(field, rawText, matchedSlice) {
+  const t = (matchedSlice || rawText || "").toLowerCase().trim();
+  if (field === "canton") {
+    const cantonMap = {
+      zurich: "Zurich", "zürich": "Zurich",
+      bern: "Bern", berne: "Bern",
+      luzern: "Luzern", lucerne: "Luzern",
+      "genève": "Geneva", genf: "Geneva", geneva: "Geneva",
+      vaud: "Vaud", waadt: "Vaud",
+      valais: "Valais", wallis: "Valais",
+      ticino: "Ticino", tessin: "Ticino",
+      fribourg: "Fribourg", freiburg: "Fribourg",
+      "neuchâtel": "Neuchâtel", neuenburg: "Neuchâtel",
+      basel: "Basel", baselland: "Basel-Land",
+      aargau: "Aargau", argovie: "Aargau",
+      thurgau: "Thurgau", thurgovie: "Thurgau",
+      "graubünden": "Graubünden", grisons: "Graubünden",
+      jura: "Jura", solothurn: "Solothurn", soleure: "Solothurn",
+      schaffhausen: "Schaffhausen", schaffhouse: "Schaffhausen",
+      schwyz: "Schwyz", zug: "Zug", uri: "Uri",
+      obwalden: "Obwalden", nidwalden: "Nidwalden", glarus: "Glarus",
+      appenzell: "Appenzell"
+    };
+    for (const k in cantonMap) if (t.includes(k)) return cantonMap[k];
+    return rawText.trim();
+  }
+  if (field === "marital_status") {
+    if (/\b(married|marié|mariée|verheiratet|sposato|sposata)\b/.test(t)) return "married";
+    if (/\b(single|célibataire|ledig|celibe|nubile)\b/.test(t)) return "single";
+    if (/\b(divorced|divorcé|divorcée|geschieden|divorziato|divorziata)\b/.test(t)) return "divorced";
+    if (/\b(widowed|veuf|veuve|verwitwet|vedovo|vedova)\b/.test(t)) return "widowed";
+    if (/\b(separated|séparé|séparée|getrennt)\b/.test(t)) return "separated";
+    return rawText.trim();
+  }
+  if (field === "nationality") {
+    if (/\b(swiss|suisse|schweizer|svizzero|svizzera)\b/.test(t)) return "Swiss";
+    if (/\b(french|français|française)\b/.test(t)) return "French";
+    if (/\b(german|deutsch|deutsche)\b/.test(t)) return "German";
+    if (/\b(italian|italiano|italiana)\b/.test(t)) return "Italian";
+    if (/\b(portuguese|portugais|portugaise)\b/.test(t)) return "Portuguese";
+    if (/\b(spanish|espagnol|espagnole)\b/.test(t)) return "Spanish";
+    if (/\b(austrian|autrichien|autrichienne)\b/.test(t)) return "Austrian";
+    if (/\b(british)\b/.test(t)) return "British";
+    if (/\b(american)\b/.test(t)) return "American";
+    return rawText.trim();
+  }
+  if (field === "church_member") {
+    if (/\b(not\s*a?\s*church\s*member|pas\s*(de\s*)?membre|kein\s*kirchenmitglied|non\s*membro|atheist|athée?|no\s*religion|sans\s*religion|konfessionslos|keine\s*religion|senza\s*religione|agnostic|agnostique|no|non|nein)\b/.test(t)) return "no";
+    return "yes";
+  }
+  return rawText.trim();
+}
 
-  const provided = {};
-  provided.canton = cantonPatterns.test(text);
-  provided.marital_status = maritalPatterns.test(text);
-  provided.num_children = childrenPatterns.test(text);
-  provided.age = agePatterns.test(text);
-  provided.church_member = churchPatterns.test(text);
-  provided.nationality = nationalityPatterns.test(text);
+function parseReplyForFields(text, pending) {
+  const lower = text.toLowerCase();
+  const out = {};
 
-  return ESSENTIAL_FIELDS.filter(f => !provided[f]);
+  const pendingArr = Array.isArray(pending) ? pending : [];
+  for (const field of ESSENTIAL_FIELDS) {
+    const m = lower.match(FIELD_PATTERNS[field]);
+    if (!m) continue;
+    if (field === "age") {
+      // m[1]/m[3] = explicit "32 years old"/"age 32"; m[4] = loose "\b\d\d\b" — accept loose only when age is pending
+      const explicit = m[1] || m[3];
+      if (explicit) {
+        const num = parseInt(explicit, 10);
+        if (!isNaN(num)) out.age = num;
+      } else if (pendingArr.includes("age") && m[4]) {
+        const num = parseInt(m[4], 10);
+        if (!isNaN(num)) out.age = num;
+      }
+    } else if (field === "num_children") {
+      if (/no\s+children|sans\s+enfants?|keine\s+kinder|senza\s+figli/.test(m[0])) {
+        out.num_children = 0;
+      } else if (m[1]) {
+        const num = parseInt(m[1], 10);
+        if (!isNaN(num)) out.num_children = num;
+      } else if (pendingArr.includes("num_children") && m[4]) {
+        const num = parseInt(m[4], 10);
+        if (!isNaN(num)) out.num_children = num;
+      }
+    } else {
+      out[field] = canonicalize(field, text, m[0]);
+    }
+  }
+
+  // Bare integer fallback: priority age, then num_children — only if pending and
+  // no numeric field was already filled by the loop above.
+  const bare = text.trim().match(/^\d{1,3}$/);
+  if (bare && pendingArr.length && out.age === undefined && out.num_children === undefined) {
+    const n = parseInt(bare[0], 10);
+    if (pendingArr.includes("age")) {
+      out.age = n;
+    } else if (pendingArr.includes("num_children")) {
+      out.num_children = n;
+    }
+  }
+
+  if (out.church_member === undefined && Array.isArray(pending) && pending.includes("church_member")) {
+    if (/^(yes|oui|ja|si)\b/i.test(text.trim())) out.church_member = "yes";
+    else if (/^(no|non|nein)\b/i.test(text.trim())) out.church_member = "no";
+  }
+
+  if (Array.isArray(pending)) {
+    for (const f of pending) {
+      if (NUMERIC_FIELDS.includes(f)) continue;
+      if (out[f] !== undefined) continue;
+      if (Object.keys(out).length > 0) break;
+      out[f] = canonicalize(f, text, text);
+      break;
+    }
+  }
+
+  return out;
+}
+
+function buildCaseDescription(initial, facts) {
+  const lines = [];
+  if (facts.age !== undefined) lines.push("Age: " + facts.age + " years old.");
+  if (facts.marital_status !== undefined) lines.push("Marital status: " + facts.marital_status + ".");
+  if (facts.num_children !== undefined) {
+    lines.push(facts.num_children === 0
+      ? "Number of children: no children."
+      : "Number of children: " + facts.num_children + " children.");
+  }
+  if (facts.canton !== undefined) lines.push("Canton: " + facts.canton + ".");
+  if (facts.church_member !== undefined) {
+    lines.push(facts.church_member === "no" ? "Not a church member." : "Church member: yes.");
+  }
+  if (facts.nationality !== undefined) lines.push("Nationality: " + facts.nationality + ".");
+  const factsBlock = lines.join(" ");
+  return factsBlock ? (initial.trim() + "\n\n" + factsBlock) : initial.trim();
 }
 
 function getFieldLabel(fieldKey, lang) {
@@ -391,7 +520,9 @@ function App() {
   const [chatInput, setChatInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [lang, setLang] = useState("fr");
-  const [conversationHistory, setConversationHistory] = useState([]);
+  const [pendingFields, setPendingFields] = useState([]);
+  const [collectedFacts, setCollectedFacts] = useState({});
+  const [initialDescription, setInitialDescription] = useState("");
   const chatBoxRef = useRef(null);
 
   useEffect(() => {
@@ -402,31 +533,61 @@ function App() {
 
   const processQuery = async (text) => {
     setMessages((prev) => [...prev, { type: "user", text }]);
-    const newHistory = [...conversationHistory, text];
-    setConversationHistory(newHistory);
+
+    let nextInitial = initialDescription;
+    let nextFacts = collectedFacts;
+    if (!initialDescription) {
+      nextInitial = text;
+      setInitialDescription(text);
+    } else {
+      const updates = parseReplyForFields(text, pendingFields);
+      nextFacts = { ...collectedFacts, ...updates };
+      setCollectedFacts(nextFacts);
+    }
+
+    const fullContext = buildCaseDescription(nextInitial, nextFacts);
     setIsLoading(true);
 
-    const fullContext = newHistory.join("\n");
     const payload = { case_description: fullContext, execute: true, language: lang };
 
     try {
       const data = await callBackend(payload);
-      if (data.execution && !data.execution.success) {
+      const backendMissing = Array.isArray(data.missing_fields) ? data.missing_fields : [];
+      if (backendMissing.length > 0) {
+        setPendingFields(backendMissing.filter((f) => ESSENTIAL_FIELDS.includes(f)));
+        setMessages((prev) => [
+          ...prev,
+          { type: "missing_fields", fields: backendMissing },
+        ]);
+      } else if (data.execution && !data.execution.success) {
         const essentialMissing = inferMissingEssentialFields(data, fullContext);
         if (essentialMissing.length > 0) {
+          setPendingFields(essentialMissing.slice());
           setMessages((prev) => [
             ...prev,
             { type: "missing_fields", fields: essentialMissing },
           ]);
         } else {
+          setPendingFields([]);
           setMessages((prev) => [...prev, { type: "answer", data }]);
         }
       } else {
         const missingFields = detectMissingFields(data);
         if (missingFields.length > 0) {
+          setPendingFields(missingFields.filter((f) => ESSENTIAL_FIELDS.includes(f)));
           setMessages((prev) => [...prev, { type: "missing_fields", fields: missingFields }]);
         } else {
-          setMessages((prev) => [...prev, { type: "answer", data }]);
+          // Backend returned a successful response but no applicable laws — ask for specifics
+          // instead of the vague "give me more details" noLaws message.
+          const noLaws = !Array.isArray(data.applicable_laws) || data.applicable_laws.length === 0;
+          const essentialMissing = noLaws ? inferMissingEssentialFields(data, fullContext) : [];
+          if (essentialMissing.length > 0) {
+            setPendingFields(essentialMissing.slice());
+            setMessages((prev) => [...prev, { type: "missing_fields", fields: essentialMissing }]);
+          } else {
+            setPendingFields([]);
+            setMessages((prev) => [...prev, { type: "answer", data }]);
+          }
         }
       }
     } catch (err) {
@@ -456,7 +617,9 @@ function App() {
   const resetChat = () => {
     setMessages([]);
     setHeroInput("");
-    setConversationHistory([]);
+    setPendingFields([]);
+    setCollectedFacts({});
+    setInitialDescription("");
     setView("hero");
   };
 
