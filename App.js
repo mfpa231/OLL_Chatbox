@@ -230,7 +230,7 @@ function getFieldLabel(fieldKey, lang) {
 // ============================================================
 // FIELD INPUT COMPONENT
 // ============================================================
-function FieldInput({ field, value, onChange, lang }) {
+function FieldInput({ field, value, onChange, lang, disabled }) {
   const t = i18n[lang] || i18n.en;
   const id = typeof field === "object" ? field.id : field;
   const type = (typeof field === "object" ? field.type : "str") || "str";
@@ -238,7 +238,7 @@ function FieldInput({ field, value, onChange, lang }) {
 
   if (type === "bool") {
     return (
-      <select className="field-input" value={value} onChange={(e) => onChange(id, e.target.value)}>
+      <select className="field-input" value={value} onChange={(e) => onChange(id, e.target.value)} disabled={disabled}>
         <option value="">{"\u2014"}</option>
         <option value="true">{t.yes}</option>
         <option value="false">{t.no}</option>
@@ -247,7 +247,7 @@ function FieldInput({ field, value, onChange, lang }) {
   }
   if (allowed && allowed.length > 0) {
     return (
-      <select className="field-input" value={value} onChange={(e) => onChange(id, e.target.value)}>
+      <select className="field-input" value={value} onChange={(e) => onChange(id, e.target.value)} disabled={disabled}>
         <option value="">{"\u2014"}</option>
         {allowed.map((v) => (
           <option key={v} value={String(v)}>{String(v)}</option>
@@ -255,7 +255,7 @@ function FieldInput({ field, value, onChange, lang }) {
       </select>
     );
   }
-  if (type === "int" || type === "float") {
+  if (type === "int" || type === "float" || type === "number") {
     return (
       <input
         className="field-input"
@@ -263,6 +263,7 @@ function FieldInput({ field, value, onChange, lang }) {
         step={type === "int" ? "1" : "any"}
         value={value}
         onChange={(e) => onChange(id, e.target.value)}
+        disabled={disabled}
       />
     );
   }
@@ -272,6 +273,7 @@ function FieldInput({ field, value, onChange, lang }) {
       type="text"
       value={value}
       onChange={(e) => onChange(id, e.target.value)}
+      disabled={disabled}
     />
   );
 }
@@ -286,13 +288,18 @@ function MissingFieldsForm({ fields, lang, onSubmit, disabled }) {
     fields.forEach((f) => { init[typeof f === "object" ? f.id : f] = ""; });
     return init;
   });
+  const [submitted, setSubmitted] = useState(false);
+
+  const isDisabled = disabled || submitted;
 
   const handleChange = (id, val) => {
+    if (isDisabled) return;
     setValues((prev) => ({ ...prev, [id]: val }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (isDisabled) return;
     const parsed = {};
     let anyFilled = false;
     fields.forEach((field) => {
@@ -302,11 +309,13 @@ function MissingFieldsForm({ fields, lang, onSubmit, disabled }) {
       if (!raw) return;
       anyFilled = true;
       if (type === "bool") parsed[id] = raw === "true";
-      else if (type === "int") parsed[id] = parseInt(raw, 10);
-      else if (type === "float") parsed[id] = parseFloat(raw);
+      else if (type === "int" || type === "float" || type === "number") parsed[id] = Number(raw);
       else parsed[id] = raw;
     });
-    if (anyFilled) onSubmit(parsed);
+    if (anyFilled) {
+      setSubmitted(true);
+      onSubmit(parsed);
+    }
   };
 
   return (
@@ -328,7 +337,7 @@ function MissingFieldsForm({ fields, lang, onSubmit, disabled }) {
                     {lawRef && <span className="law-ref">({lawRef})</span>}
                   </td>
                   <td>
-                    <FieldInput field={field} value={values[id]} onChange={handleChange} lang={lang} />
+                    <FieldInput field={field} value={values[id]} onChange={handleChange} lang={lang} disabled={isDisabled} />
                   </td>
                 </tr>
               );
@@ -336,7 +345,9 @@ function MissingFieldsForm({ fields, lang, onSubmit, disabled }) {
           </tbody>
         </table>
         <div className="missing-fields-submit">
-          <button type="submit" disabled={disabled}>Submit</button>
+          <button type="submit" disabled={isDisabled}>
+            {submitted ? "\u2026" : "Submit"}
+          </button>
         </div>
       </form>
     </div>

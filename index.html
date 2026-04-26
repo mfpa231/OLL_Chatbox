@@ -201,9 +201,10 @@
   .field-input { width: 100%; padding: 8px 10px; border: 1px solid rgba(17,20,24,0.2); background: white; font-family: inherit; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.2s; }
   .field-input:focus { border-color: var(--swiss-red); }
   select.field-input { cursor: pointer; }
+  .field-input:disabled { background: var(--paper-warm); color: var(--muted); cursor: not-allowed; }
   .missing-fields-submit { margin-top: 12px; display: flex; justify-content: flex-end; }
   .missing-fields-submit button { background: var(--federal-blue); color: white; border: none; padding: 10px 24px; font-family: inherit; font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: background 0.2s; }
-  .missing-fields-submit button:hover { background: var(--swiss-red); }
+  .missing-fields-submit button:hover:not(:disabled) { background: var(--swiss-red); }
   .missing-fields-submit button:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* ERROR FOOTNOTE */
