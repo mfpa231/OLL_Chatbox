@@ -2,7 +2,7 @@
 
 ## Code Quality
 - [x] **1. Extract shared modules** — i18n, fieldMeta, fieldLabels, SWISS_CANTONS, parseSyllogism, resolveFieldMeta, formatComputedValue are duplicated between index.html and App.js. Extract to shared JS modules.
-- [ ] **2. Deduplicate CSS** — `.msg.bot` and other rules are defined twice in App.css. Clean up duplicate declarations.
+- [x] **2. Deduplicate CSS** — `.msg.bot` and other rules are defined twice in App.css. Clean up duplicate declarations.
 - [ ] **3. Extract inline styles** — index.html uses inline `<style>` blocks; move to a shared stylesheet.
 
 ## UX / Accessibility
