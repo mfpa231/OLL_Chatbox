@@ -16,521 +16,148 @@
     --ink: #111418;
     --paper: #FAF7F2;
     --paper-warm: #F2EDE4;
-    --rule: #1A1F2A;
     --muted: #5A6373;
+    --success: #1B7340;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html, body {
-    height: 100%;
-  }
-
+  html, body { height: 100%; }
   body {
     font-family: 'Inter Tight', sans-serif;
-    background: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    overflow-x: hidden;
+    background: var(--paper); color: var(--ink);
+    min-height: 100vh; overflow-x: hidden;
     background-image:
       radial-gradient(circle at 20% 10%, rgba(218, 41, 28, 0.06), transparent 40%),
       radial-gradient(circle at 85% 90%, rgba(11, 47, 92, 0.07), transparent 45%);
   }
-
-  /* Subtle paper grain */
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.4;
-    z-index: 1;
+    content: ''; position: fixed; inset: 0;
+    pointer-events: none; opacity: 0.4; z-index: 1;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
   }
 
-  /* HEADER */
   header {
-    position: relative;
-    z-index: 2;
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    position: relative; z-index: 2; padding: 20px 32px;
+    display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid rgba(17, 20, 24, 0.08);
   }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .swiss-mark { width: 28px; height: 28px; background: var(--swiss-red); position: relative; flex-shrink: 0; }
+  .swiss-mark::before, .swiss-mark::after { content: ''; position: absolute; background: white; }
+  .swiss-mark::before { width: 60%; height: 18%; top: 41%; left: 20%; }
+  .swiss-mark::after { width: 18%; height: 60%; top: 20%; left: 41%; }
+  .brand-divider { width: 1px; height: 32px; background: rgba(17, 20, 24, 0.15); margin: 0 4px; }
+  .partner-logo { height: 32px; width: auto; display: block; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .brand-text .title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; letter-spacing: -0.01em; }
+  .brand-text .sub { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); margin-top: 2px; }
+  .header-meta { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); display: flex; align-items: center; gap: 10px; }
+  .header-meta .dot { width: 6px; height: 6px; background: var(--swiss-red); border-radius: 50%; animation: pulse 2s infinite ease-in-out; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  main { position: relative; z-index: 2; min-height: calc(100vh - 70px); display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
 
-  .swiss-mark {
-    width: 28px;
-    height: 28px;
-    background: var(--swiss-red);
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .swiss-mark::before,
-  .swiss-mark::after {
-    content: '';
-    position: absolute;
-    background: white;
-  }
-
-  .swiss-mark::before {
-    width: 60%;
-    height: 18%;
-    top: 41%;
-    left: 20%;
-  }
-
-  .swiss-mark::after {
-    width: 18%;
-    height: 60%;
-    top: 20%;
-    left: 41%;
-  }
-
-  .brand-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-  }
-
-  .brand-text .title {
-    font-family: 'Fraunces', serif;
-    font-weight: 600;
-    font-size: 18px;
-    letter-spacing: -0.01em;
-  }
-
-  .brand-text .sub {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  .header-meta {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .header-meta .dot {
-    width: 6px;
-    height: 6px;
-    background: var(--swiss-red);
-    border-radius: 50%;
-    animation: pulse 2s infinite ease-in-out;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.85); }
-  }
-
-  /* MAIN STAGE */
-  main {
-    position: relative;
-    z-index: 2;
-    min-height: calc(100vh - 70px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 32px;
-  }
-
-  /* HERO (landing) */
   .hero {
-    width: 100%;
-    max-width: 720px;
-    background: white;
+    width: 100%; max-width: 720px; background: white;
     border: 1px solid rgba(17, 20, 24, 0.1);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.8) inset,
-      0 30px 60px -20px rgba(11, 47, 92, 0.15),
-      0 10px 25px -10px rgba(11, 47, 92, 0.08);
-    position: relative;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 30px 60px -20px rgba(11, 47, 92, 0.15), 0 10px 25px -10px rgba(11, 47, 92, 0.08);
+    position: relative; transition: opacity 0.5s ease, transform 0.5s ease;
   }
+  .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--swiss-red) 0%, var(--swiss-red) 50%, var(--federal-blue) 50%, var(--federal-blue) 100%); }
+  .hero-inner { padding: 56px 56px 48px; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.22em; color: var(--federal-blue); font-weight: 500; margin-bottom: 24px; padding: 6px 12px; border: 1px solid rgba(11, 47, 92, 0.2); background: rgba(11, 47, 92, 0.04); }
+  .hero-eyebrow::before { content: '§'; font-family: 'Fraunces', serif; font-size: 14px; color: var(--swiss-red); }
+  .hero h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(36px, 5vw, 52px); line-height: 1.05; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 20px; }
+  .hero h1 em { font-style: italic; color: var(--swiss-red); font-weight: 400; }
+  .hero p { font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 540px; margin-bottom: 36px; }
 
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg,
-      var(--swiss-red) 0%,
-      var(--swiss-red) 50%,
-      var(--federal-blue) 50%,
-      var(--federal-blue) 100%);
-  }
+  .suggestions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+  .suggestion-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); margin-bottom: 4px; }
+  .chip { text-align: left; background: var(--paper-warm); border: 1px solid rgba(17, 20, 24, 0.08); padding: 14px 18px; font-family: inherit; font-size: 14px; color: var(--ink); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .chip:hover { background: white; border-color: var(--federal-blue); transform: translateX(4px); }
+  .chip .arrow { color: var(--swiss-red); font-family: 'Fraunces', serif; font-size: 18px; opacity: 0; transform: translateX(-4px); transition: all 0.2s ease; }
+  .chip:hover .arrow { opacity: 1; transform: translateX(0); }
 
-  .hero-inner {
-    padding: 56px 56px 48px;
-  }
+  .input-row { display: flex; border: 1.5px solid var(--ink); background: white; transition: border-color 0.2s ease; }
+  .input-row:focus-within { border-color: var(--swiss-red); }
+  .input-row input { flex: 1; border: none; padding: 18px 20px; font-family: inherit; font-size: 15px; color: var(--ink); background: transparent; outline: none; }
+  .input-row input::placeholder { color: var(--muted); font-style: italic; }
+  .input-row button { background: var(--ink); color: white; border: none; padding: 0 28px; font-family: inherit; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: background 0.2s ease; display: flex; align-items: center; gap: 8px; }
+  .input-row button:hover { background: var(--swiss-red); }
+  .input-row button .arrow { font-family: 'Fraunces', serif; font-size: 16px; }
 
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.22em;
-    color: var(--federal-blue);
-    font-weight: 500;
-    margin-bottom: 24px;
-    padding: 6px 12px;
-    border: 1px solid rgba(11, 47, 92, 0.2);
-    background: rgba(11, 47, 92, 0.04);
-  }
+  .hero-footer { margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(17, 20, 24, 0.08); display: flex; justify-content: space-between; align-items: center; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); }
+  .hero-footer .languages { display: flex; gap: 14px; }
+  .hero-footer .languages span { cursor: pointer; transition: color 0.2s; }
+  .hero-footer .languages span:hover, .hero-footer .languages span.active { color: var(--swiss-red); }
 
-  .hero-eyebrow::before {
-    content: '§';
-    font-family: 'Fraunces', serif;
-    font-size: 14px;
-    color: var(--swiss-red);
-  }
+  .chat-view { display: none; width: 100%; max-width: 880px; height: calc(100vh - 150px); max-height: 820px; background: white; border: 1px solid rgba(17, 20, 24, 0.1); box-shadow: 0 30px 60px -20px rgba(11, 47, 92, 0.15), 0 10px 25px -10px rgba(11, 47, 92, 0.08); flex-direction: column; position: relative; }
+  .chat-view.visible { display: flex; animation: fadeIn 0.4s ease; }
+  .hero.hidden { display: none; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .chat-view::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--swiss-red) 0%, var(--swiss-red) 50%, var(--federal-blue) 50%, var(--federal-blue) 100%); }
 
-  .hero h1 {
-    font-family: 'Fraunces', serif;
-    font-weight: 500;
-    font-size: clamp(36px, 5vw, 52px);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    margin-bottom: 20px;
-  }
+  .chat-header { padding: 22px 28px; border-bottom: 1px solid rgba(17, 20, 24, 0.08); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .chat-header .label { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500; }
+  .chat-header .label em { font-style: italic; color: var(--swiss-red); }
+  .chat-header-actions { display: flex; gap: 8px; align-items: center; }
+  .lang-toggle { display: flex; border: 1px solid rgba(17, 20, 24, 0.15); }
+  .lang-toggle button { background: none; border: none; padding: 6px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; font-family: inherit; color: var(--muted); transition: all 0.2s; }
+  .lang-toggle button.active { background: var(--ink); color: white; }
+  .new-chat { background: none; border: 1px solid rgba(17, 20, 24, 0.15); padding: 8px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; font-family: inherit; color: var(--ink); transition: all 0.2s; }
+  .new-chat:hover { border-color: var(--swiss-red); color: var(--swiss-red); }
 
-  .hero h1 em {
-    font-style: italic;
-    color: var(--swiss-red);
-    font-weight: 400;
-  }
-
-  .hero p {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--muted);
-    max-width: 540px;
-    margin-bottom: 36px;
-  }
-
-  /* Suggestion chips */
-  .suggestions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 36px;
-  }
-
-  .suggestion-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.22em;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-
-  .chip {
-    text-align: left;
-    background: var(--paper-warm);
-    border: 1px solid rgba(17, 20, 24, 0.08);
-    padding: 14px 18px;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--ink);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .chip:hover {
-    background: white;
-    border-color: var(--federal-blue);
-    transform: translateX(4px);
-  }
-
-  .chip .arrow {
-    color: var(--swiss-red);
-    font-family: 'Fraunces', serif;
-    font-size: 18px;
-    opacity: 0;
-    transform: translateX(-4px);
-    transition: all 0.2s ease;
-  }
-
-  .chip:hover .arrow {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  /* Input row */
-  .input-row {
-    display: flex;
-    border: 1.5px solid var(--ink);
-    background: white;
-    transition: border-color 0.2s ease;
-  }
-
-  .input-row:focus-within {
-    border-color: var(--swiss-red);
-  }
-
-  .input-row input {
-    flex: 1;
-    border: none;
-    padding: 18px 20px;
-    font-family: inherit;
-    font-size: 15px;
-    color: var(--ink);
-    background: transparent;
-    outline: none;
-  }
-
-  .input-row input::placeholder {
-    color: var(--muted);
-    font-style: italic;
-  }
-
-  .input-row button {
-    background: var(--ink);
-    color: white;
-    border: none;
-    padding: 0 28px;
-    font-family: inherit;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .input-row button:hover {
-    background: var(--swiss-red);
-  }
-
-  .input-row button .arrow {
-    font-family: 'Fraunces', serif;
-    font-size: 16px;
-  }
-
-  /* Hero footer */
-  .hero-footer {
-    margin-top: 28px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(17, 20, 24, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--muted);
-  }
-
-  .hero-footer .languages {
-    display: flex;
-    gap: 14px;
-  }
-
-  .hero-footer .languages span {
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-
-  .hero-footer .languages span:hover,
-  .hero-footer .languages span.active {
-    color: var(--swiss-red);
-  }
-
-  /* CHAT VIEW */
-  .chat-view {
-    display: none;
-    width: 100%;
-    max-width: 760px;
-    height: calc(100vh - 150px);
-    max-height: 760px;
-    background: white;
-    border: 1px solid rgba(17, 20, 24, 0.1);
-    box-shadow:
-      0 30px 60px -20px rgba(11, 47, 92, 0.15),
-      0 10px 25px -10px rgba(11, 47, 92, 0.08);
-    flex-direction: column;
-    position: relative;
-  }
-
-  .chat-view.visible {
-    display: flex;
-    animation: fadeIn 0.4s ease;
-  }
-
-  .hero.hidden {
-    display: none;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .chat-view::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg,
-      var(--swiss-red) 0%,
-      var(--swiss-red) 50%,
-      var(--federal-blue) 50%,
-      var(--federal-blue) 100%);
-  }
-
-  .chat-header {
-    padding: 22px 28px;
-    border-bottom: 1px solid rgba(17, 20, 24, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .chat-header .label {
-    font-family: 'Fraunces', serif;
-    font-size: 18px;
-    font-weight: 500;
-  }
-
-  .chat-header .label em {
-    font-style: italic;
-    color: var(--swiss-red);
-  }
-
-  .chat-header .new-chat {
-    background: none;
-    border: 1px solid rgba(17, 20, 24, 0.15);
-    padding: 8px 14px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    cursor: pointer;
-    font-family: inherit;
-    color: var(--ink);
-    transition: all 0.2s;
-  }
-
-  .chat-header .new-chat:hover {
-    border-color: var(--swiss-red);
-    color: var(--swiss-red);
-  }
-
-  .chat-box {
-    flex: 1;
-    overflow-y: auto;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-
+  .chat-box { flex: 1; overflow-y: auto; padding: 28px; display: flex; flex-direction: column; gap: 22px; }
   .chat-box::-webkit-scrollbar { width: 6px; }
   .chat-box::-webkit-scrollbar-track { background: transparent; }
   .chat-box::-webkit-scrollbar-thumb { background: rgba(17, 20, 24, 0.15); border-radius: 3px; }
 
-  .msg {
-    max-width: 78%;
-    padding: 14px 18px;
-    font-size: 14.5px;
-    line-height: 1.55;
-    animation: msgIn 0.3s ease;
-  }
-
-  @keyframes msgIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .msg.user {
-    align-self: flex-end;
-    background: var(--federal-blue);
-    color: white;
-    border-radius: 14px 14px 2px 14px;
-  }
+  .msg { max-width: 78%; padding: 14px 18px; font-size: 14.5px; line-height: 1.55; animation: msgIn 0.3s ease; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .msg.user { align-self: flex-end; background: var(--federal-blue); color: white; border-radius: 14px 14px 2px 14px; }
 
   .msg.bot {
     align-self: flex-start;
     background: var(--paper-warm);
     color: var(--ink);
     border-radius: 14px 14px 14px 2px;
-    border-left: 3px solid var(--swiss-red);
+    padding: 14px 18px;
+    max-width: 85%;
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+  .msg.bot p { margin: 0; }
+  .msg.bot p + p { margin-top: 10px; }
+
+  .exec-error {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 11px; line-height: 1.5;
+    background: rgba(218, 41, 28, 0.05);
+    border: 1px solid rgba(218, 41, 28, 0.2);
+    padding: 10px 12px;
+    color: var(--swiss-red-deep);
+    word-break: break-word;
   }
 
-  .chat-input-area {
-    padding: 20px 28px 24px;
-    border-top: 1px solid rgba(17, 20, 24, 0.08);
-  }
+  .typing { align-self: flex-start; display: flex; gap: 4px; padding: 14px 18px; background: var(--paper-warm); border-radius: 14px 14px 14px 2px; border-left: 3px solid var(--swiss-red); }
+  .typing span { width: 6px; height: 6px; background: var(--muted); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out; }
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
 
-  .chat-input-row {
-    display: flex;
-    border: 1.5px solid var(--ink);
-    background: white;
-  }
+  .chat-input-area { padding: 20px 28px 24px; border-top: 1px solid rgba(17, 20, 24, 0.08); }
+  .chat-input-row { display: flex; border: 1.5px solid var(--ink); background: white; }
+  .chat-input-row:focus-within { border-color: var(--swiss-red); }
+  .chat-input-row input { flex: 1; border: none; padding: 14px 16px; font-family: inherit; font-size: 14px; background: transparent; outline: none; }
+  .chat-input-row button { background: var(--ink); color: white; border: none; padding: 0 24px; font-family: inherit; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: background 0.2s; }
+  .chat-input-row button:hover { background: var(--swiss-red); }
 
-  .chat-input-row:focus-within {
-    border-color: var(--swiss-red);
-  }
-
-  .chat-input-row input {
-    flex: 1;
-    border: none;
-    padding: 14px 16px;
-    font-family: inherit;
-    font-size: 14px;
-    background: transparent;
-    outline: none;
-  }
-
-  .chat-input-row button {
-    background: var(--ink);
-    color: white;
-    border: none;
-    padding: 0 24px;
-    font-family: inherit;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .chat-input-row button:hover {
-    background: var(--swiss-red);
-  }
-
-  /* Mobile */
   @media (max-width: 600px) {
     .hero-inner { padding: 36px 24px; }
     header { padding: 16px 20px; }
     main { padding: 20px; }
     .hero-footer { flex-direction: column; gap: 10px; align-items: flex-start; }
+    .brand-divider, .partner-logo { display: none; }
   }
 </style>
 </head>
@@ -543,6 +170,8 @@
       <div class="title">Fedlex Assistant</div>
       <div class="sub">Swiss Law Chatbot</div>
     </div>
+    <div class="brand-divider"></div>
+    <img src="open-legal-lab.png" alt="Open Legal Lab" class="partner-logo" />
   </div>
   <div class="header-meta">
     <span class="dot"></span>
@@ -551,17 +180,18 @@
 </header>
 
 <main>
-  <!-- HERO -->
   <section class="hero" id="hero">
     <div class="hero-inner">
-      <div class="hero-eyebrow">Swiss Federal Law · Confederation Edition</div>
-
+      <div class="hero-eyebrow">Swiss Federal legal text described simply</div>
       <h1>Navigate Swiss law<br/>with <em>clarity</em>.</h1>
-
-      <p>An assistant trained on Swiss foreigner law, residency permits, and federal procedures. Describe your situation in plain language — get grounded answers with references to Fedlex sources.</p>
+      <p>Describe your situation in plain language — get grounded answers with references to Fedlex sources with our assistant.</p>
 
       <div class="suggestions">
         <div class="suggestion-label">Try asking about</div>
+        <button class="chip" onclick="useSuggestion(this)">
+          <span>Anna works in Zurich earning 85000 CHF/year as an employee</span>
+          <span class="arrow">→</span>
+        </button>
         <button class="chip" onclick="useSuggestion(this)">
           <span>How do I renew my B residence permit?</span>
           <span class="arrow">→</span>
@@ -570,36 +200,36 @@
           <span>What are the requirements for Swiss naturalization?</span>
           <span class="arrow">→</span>
         </button>
-        <button class="chip" onclick="useSuggestion(this)">
-          <span>Can I bring my family to Switzerland on a work permit?</span>
-          <span class="arrow">→</span>
-        </button>
       </div>
 
       <div class="input-row">
         <input id="heroInput" placeholder="Describe your situation…" onkeydown="if(event.key==='Enter') startChat()" />
-        <button onclick="startChat()">
-          Ask <span class="arrow">→</span>
-        </button>
+        <button onclick="startChat()">Ask <span class="arrow">→</span></button>
       </div>
 
       <div class="hero-footer">
         <div>Sources · Fedlex.admin.ch</div>
         <div class="languages">
-          <span class="active">EN</span>
-          <span>FR</span>
-          <span>DE</span>
-          <span>IT</span>
+          <span data-lang="en" onclick="setLang('en')">EN</span>
+          <span data-lang="fr" class="active" onclick="setLang('fr')">FR</span>
+          <span data-lang="de" onclick="setLang('de')">DE</span>
+          <span data-lang="it" onclick="setLang('it')">IT</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CHAT -->
   <section class="chat-view" id="chatView">
     <div class="chat-header">
       <div class="label">Fedlex <em>Conversation</em></div>
-      <button class="new-chat" onclick="resetChat()">New Chat</button>
+      <div class="chat-header-actions">
+        <div class="lang-toggle">
+          <button data-lang="en" onclick="setLang('en')">EN</button>
+          <button data-lang="fr" class="active" onclick="setLang('fr')">FR</button>
+          <button data-lang="de" onclick="setLang('de')">DE</button>
+        </div>
+        <button class="new-chat" onclick="resetChat()">New Chat</button>
+      </div>
     </div>
     <div class="chat-box" id="chatBox"></div>
     <div class="chat-input-area">
@@ -612,43 +242,259 @@
 </main>
 
 <script>
+  let currentLang = 'fr';
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('[data-lang]').forEach(el => {
+      el.classList.toggle('active', el.dataset.lang === lang);
+    });
+  }
+
+  // ============================================================
+  // BACKEND API
+  // ============================================================
+  const API_URL = "http://vps-13d3e726.vps.ovh.net:8040/api/v1/classify";
+
+  async function callBackend(payload) {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      throw new Error(`Server responded with ${res.status}: ${res.statusText}`);
+    }
+
+    return await res.json();
+  }
+
+  const i18n = {
+    en: {
+      concretely: "In concrete terms,",
+      chf: "CHF", perMonth: "per month",
+      alsoConsidered: "I also considered some other rules that don't apply here:",
+      execFailNote: "I wasn't able to compute the exact figures due to a technical issue, but the legal reasoning above still holds.",
+      noLaws: "I couldn't identify any applicable Swiss federal law articles for this situation. Could you give me more details?"
+    },
+    fr: {
+      concretely: "Concrètement,",
+      chf: "CHF", perMonth: "par mois",
+      alsoConsidered: "J'ai aussi examiné d'autres règles qui ne s'appliquent pas ici :",
+      execFailNote: "Je n'ai pas pu calculer le montant exact en raison d'un problème technique, mais le raisonnement juridique ci-dessus reste valide.",
+      noLaws: "Je n'ai pas pu identifier d'articles de droit fédéral applicables à cette situation. Pourriez-vous me donner plus de détails ?"
+    },
+    de: {
+      concretely: "Konkret,",
+      chf: "CHF", perMonth: "pro Monat",
+      alsoConsidered: "Ich habe auch andere Regeln geprüft, die hier nicht gelten:",
+      execFailNote: "Ich konnte den genauen Betrag aufgrund eines technischen Problems nicht berechnen, aber die rechtliche Argumentation bleibt gültig.",
+      noLaws: "Für diese Situation konnten keine anwendbaren Artikel des Bundesrechts identifiziert werden. Könnten Sie mir weitere Details geben?"
+    }
+  };
+
+  // Parser handles BOTH formats: English bullet list and French "Major Premise:" + "---"
+  function parseSyllogism(text) {
+    if (!text) return [];
+
+    if (text.includes('---')) {
+      return text.split(/\n*---\n*/).map(b => b.trim()).filter(Boolean).map(block => {
+        const premises = [];
+        const lines = block.split(/\n+/);
+        let currentType = null;
+        let buffer = [];
+        const flush = () => {
+          if (currentType && buffer.length) premises.push({ type: currentType, text: buffer.join(' ').trim() });
+          buffer = [];
+        };
+        lines.forEach(line => {
+          const m = line.match(/^\s*(Major\s*Premise|Minor\s*Premise|Conclusion)\s*:\s*(.*)/i);
+          if (m) {
+            flush();
+            currentType = m[1].toLowerCase().includes('major') ? 'major'
+                        : m[1].toLowerCase().includes('minor') ? 'minor' : 'conclusion';
+            if (m[2]) buffer.push(m[2]);
+          } else if (currentType) buffer.push(line);
+        });
+        flush();
+        const major = premises.find(p => p.type === 'major');
+        const articleMatch = major ? major.text.match(/art\.\s*(\d+[a-z]?)\s*([A-Z]{2,5})/i) : null;
+        const article = articleMatch ? `${articleMatch[2].toUpperCase()} Art. ${articleMatch[1]}` : '';
+        return { article, premises };
+      });
+    }
+
+    return text.split(/\n\n+/).map(b => b.trim()).filter(Boolean).map(block => {
+      const headerMatch = block.match(/\*\*([^*]+)\*\*/);
+      const article = headerMatch ? headerMatch[1].trim() : '';
+      const premises = block.split('\n').slice(1).map(line => {
+        const m = line.match(/-\s*(Major premise|Minor premise|Conclusion)\s*:\s*(.+)/i);
+        if (!m) return null;
+        const type = m[1].toLowerCase().includes('major') ? 'major'
+                   : m[1].toLowerCase().includes('minor') ? 'minor' : 'conclusion';
+        return { type, text: m[2].trim() };
+      }).filter(Boolean);
+      return { article, premises };
+    });
+  }
+
+  function humanizeVariable(v) { return v.replace(/_/g, ' ').replace(/\bahv\b/gi, 'AHV'); }
+
+  function formatValue(v) {
+    if (typeof v === 'boolean') return v ? '✓ true' : '✕ false';
+    if (typeof v === 'number') {
+      return Number.isInteger(v) ? v.toLocaleString() : v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
+    return String(v);
+  }
+
+  function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function articleMatchesApplicable(blockArticle, applicableLaws) {
+    return applicableLaws.some(l => blockArticle.startsWith(l));
+  }
+
+  function stripTrailingPeriod(s) { return s ? s.replace(/[.\s]+$/, '') : s; }
+
+  function renderLegalAnswer(data) {
+    const t = i18n[currentLang] || i18n.en;
+    const syllogism = parseSyllogism(data.syllogistic_reasoning);
+    const applicableLaws = data.applicable_laws || [];
+    const computedValues = (data.execution && data.execution.computed_values) || {};
+
+    const articleToComputed = {};
+    (data.code_generation || []).forEach(cg => {
+      if (computedValues[cg.openfisca_variable] !== undefined) {
+        articleToComputed[cg.article_reference] = {
+          variable: cg.openfisca_variable,
+          value: computedValues[cg.openfisca_variable]
+        };
+      }
+    });
+
+    if (applicableLaws.length === 0) {
+      return `<div class="msg bot"><p>${escapeHtml(t.noLaws)}</p></div>`;
+    }
+
+    const applicableBlocks = syllogism.filter(s => s.article && articleMatchesApplicable(s.article, applicableLaws));
+    const excludedBlocks = syllogism.filter(s => s.article && !articleMatchesApplicable(s.article, applicableLaws));
+
+    const paragraphs = [];
+
+    // Main paragraph: facts + conclusions woven together as prose
+    const sentences = [];
+    applicableBlocks.forEach((block, i) => {
+      const minor = block.premises.find(p => p.type === 'minor');
+      const conclusion = block.premises.find(p => p.type === 'conclusion');
+      const articleRef = applicableLaws.find(l => block.article.startsWith(l)) || block.article;
+      const computed = articleToComputed[articleRef];
+
+      if (i === 0 && minor) {
+        sentences.push(stripTrailingPeriod(minor.text) + '.');
+      }
+      if (conclusion) {
+        let s = stripTrailingPeriod(conclusion.text);
+        if (computed && typeof computed.value === 'number' && computed.variable.includes('contribution')) {
+          const amount = computed.value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          s += ` ${t.concretely.toLowerCase()} ${amount} ${t.chf} ${t.perMonth}`;
+        }
+        sentences.push(s + '.');
+      }
+    });
+    if (sentences.length) paragraphs.push(sentences.join(' '));
+
+    // Excluded articles (soft mention)
+    if (excludedBlocks.length) {
+      const excludedSentences = excludedBlocks
+        .map(b => {
+          const conclusion = b.premises.find(p => p.type === 'conclusion');
+          return conclusion ? stripTrailingPeriod(conclusion.text) + '.' : null;
+        })
+        .filter(Boolean);
+      if (excludedSentences.length) {
+        paragraphs.push(`${t.alsoConsidered} ${excludedSentences.join(' ')}`);
+      }
+    }
+
+    if (data.execution && !data.execution.success) {
+      paragraphs.push(t.execFailNote);
+    }
+
+    const html = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+    return `<div class="msg bot">${html}</div>`;
+  }
+
+  // ============================================================
+  // CHAT FLOW
+  // ============================================================
   function useSuggestion(el) {
     document.getElementById('heroInput').value = el.querySelector('span').innerText;
     document.getElementById('heroInput').focus();
   }
 
+  function addUserMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'msg user';
+    div.innerText = text;
+    const box = document.getElementById('chatBox');
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function addLegalAnswer(data) {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = renderLegalAnswer(data);
+    const box = document.getElementById('chatBox');
+    box.appendChild(wrap.firstElementChild);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function showTyping() {
+    const div = document.createElement('div');
+    div.className = 'typing';
+    div.id = 'typingIndicator';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    document.getElementById('chatBox').appendChild(div);
+    document.getElementById('chatBox').scrollTop = 99999;
+  }
+
+  function hideTyping() {
+    const t = document.getElementById('typingIndicator');
+    if (t) t.remove();
+  }
+
+  async function processQuery(text) {
+    addUserMessage(text);
+    showTyping();
+    const payload = { case_description: text, execute: true, language: currentLang };
+    try {
+      const data = await callBackend(payload);
+      hideTyping();
+      addLegalAnswer(data);
+    } catch (err) {
+      hideTyping();
+      const errDiv = document.createElement('div');
+      errDiv.className = 'exec-error';
+      errDiv.innerText = 'Backend error: ' + err.message;
+      document.getElementById('chatBox').appendChild(errDiv);
+    }
+  }
+
   function startChat() {
     const text = document.getElementById('heroInput').value.trim();
     if (!text) return;
-
     document.getElementById('hero').classList.add('hidden');
     document.getElementById('chatView').classList.add('visible');
-
-    addMessage("Hello — describe your situation and I'll help you find the relevant Swiss federal law references.", 'bot');
-    addMessage(text, 'user');
-    setTimeout(() => {
-      addMessage("This is a placeholder answer based on Swiss law. (Connect your backend here to return real Fedlex-grounded responses.)", 'bot');
-    }, 500);
+    processQuery(text);
   }
 
   function sendMessage() {
     const input = document.getElementById('chatInput');
     const text = input.value.trim();
     if (!text) return;
-    addMessage(text, 'user');
     input.value = '';
-    setTimeout(() => {
-      addMessage("This is a placeholder answer based on Swiss law.", 'bot');
-    }, 500);
-  }
-
-  function addMessage(text, sender) {
-    const div = document.createElement('div');
-    div.className = 'msg ' + sender;
-    div.innerText = text;
-    const box = document.getElementById('chatBox');
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
+    processQuery(text);
   }
 
   function resetChat() {
