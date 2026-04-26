@@ -32,6 +32,8 @@ const i18n = {
     alsoConsidered: "I also considered some other rules that don't apply here:",
     execFailNote: "I wasn't able to compute the exact figures due to a technical issue, but the legal reasoning above still holds.",
     noLaws: "I couldn't identify any applicable Swiss federal law articles for this situation. Could you give me more details?",
+    missingFieldsIntro: "To provide a complete legal analysis, I still need the following information:",
+    missingFieldsOutro: "Please provide these details so I can give you a precise answer.",
   },
   fr: {
     concretely: "Concrètement,",
@@ -40,6 +42,8 @@ const i18n = {
     alsoConsidered: "J'ai aussi examiné d'autres règles qui ne s'appliquent pas ici :",
     execFailNote: "Je n'ai pas pu calculer le montant exact en raison d'un problème technique, mais le raisonnement juridique ci-dessus reste valide.",
     noLaws: "Je n'ai pas pu identifier d'articles de droit fédéral applicables à cette situation. Pourriez-vous me donner plus de détails ?",
+    missingFieldsIntro: "Pour fournir une analyse juridique complète, j'ai encore besoin des informations suivantes :",
+    missingFieldsOutro: "Veuillez fournir ces détails afin que je puisse vous donner une réponse précise.",
   },
   de: {
     concretely: "Konkret,",
@@ -48,6 +52,18 @@ const i18n = {
     alsoConsidered: "Ich habe auch andere Regeln geprüft, die hier nicht gelten:",
     execFailNote: "Ich konnte den genauen Betrag aufgrund eines technischen Problems nicht berechnen, aber die rechtliche Argumentation bleibt gültig.",
     noLaws: "Für diese Situation konnten keine anwendbaren Artikel des Bundesrechts identifiziert werden. Könnten Sie mir weitere Details geben?",
+    missingFieldsIntro: "Um eine vollständige rechtliche Analyse zu erstellen, benötige ich noch folgende Informationen:",
+    missingFieldsOutro: "Bitte geben Sie diese Details an, damit ich Ihnen eine genaue Antwort geben kann.",
+  },
+  it: {
+    concretely: "Concretamente,",
+    chf: "CHF",
+    perMonth: "al mese",
+    alsoConsidered: "Ho anche considerato altre regole che non si applicano in questo caso:",
+    execFailNote: "Non sono riuscito a calcolare l'importo esatto a causa di un problema tecnico, ma il ragionamento giuridico sopra resta valido.",
+    noLaws: "Non sono riuscito a identificare articoli di diritto federale applicabili a questa situazione. Potrebbe fornirmi maggiori dettagli?",
+    missingFieldsIntro: "Per fornire un'analisi giuridica completa, ho ancora bisogno delle seguenti informazioni:",
+    missingFieldsOutro: "Vi prego di fornire questi dettagli affinché possa darvi una risposta precisa.",
   },
 };
 
@@ -157,6 +173,113 @@ const SUGGESTIONS = [
 ];
 
 // ============================================================
+// FIELD LABELS — i18n mapping for missing field prompts
+// ============================================================
+const fieldLabels = {
+  income: { en: "Income", fr: "Revenu", de: "Einkommen", it: "Reddito" },
+  canton: { en: "Canton of residence", fr: "Canton de résidence", de: "Wohnkanton", it: "Cantone di residenza" },
+  employment_status: { en: "Employment status", fr: "Statut d'emploi", de: "Beschäftigungsstatus", it: "Stato occupazionale" },
+  age: { en: "Age", fr: "Âge", de: "Alter", it: "Età" },
+  nationality: { en: "Nationality", fr: "Nationalité", de: "Staatsangehörigkeit", it: "Nazionalità" },
+  marital_status: { en: "Marital status", fr: "État civil", de: "Zivilstand", it: "Stato civile" },
+  num_children: { en: "Number of children", fr: "Nombre d'enfants", de: "Anzahl Kinder", it: "Numero di figli" },
+  residence_permit: { en: "Residence permit type", fr: "Type de permis de séjour", de: "Aufenthaltsbewilligung", it: "Tipo di permesso di soggiorno" },
+  years_in_switzerland: { en: "Years in Switzerland", fr: "Années en Suisse", de: "Jahre in der Schweiz", it: "Anni in Svizzera" },
+  employer_type: { en: "Employer type", fr: "Type d'employeur", de: "Arbeitgebertyp", it: "Tipo di datore di lavoro" },
+  weekly_hours: { en: "Weekly working hours", fr: "Heures de travail hebdomadaires", de: "Wöchentliche Arbeitsstunden", it: "Ore di lavoro settimanali" },
+  church_member: { en: "Church membership", fr: "Appartenance à une église", de: "Kirchenmitgliedschaft", it: "Appartenenza a una chiesa" },
+  salary: { en: "Salary", fr: "Salaire", de: "Gehalt", it: "Stipendio" },
+  tax_class: { en: "Tax class", fr: "Classe d'impôt", de: "Steuerklasse", it: "Classe fiscale" },
+  work_canton: { en: "Canton of employment", fr: "Canton d'emploi", de: "Arbeitskanton", it: "Cantone di lavoro" },
+  occupation: { en: "Occupation", fr: "Profession", de: "Beruf", it: "Professione" },
+  self_employed: { en: "Self-employed status", fr: "Statut indépendant", de: "Selbstständigkeitsstatus", it: "Stato di lavoratore autonomo" },
+  birth_date: { en: "Date of birth", fr: "Date de naissance", de: "Geburtsdatum", it: "Data di nascita" },
+  gender: { en: "Gender", fr: "Genre", de: "Geschlecht", it: "Geschlecht" },
+  syllogistic_reasoning: { en: "Legal reasoning", fr: "Raisonnement juridique", de: "Rechtliche Begründung", it: "Ragionamento giuridico" },
+  applicable_laws: { en: "Applicable laws", fr: "Lois applicables", de: "Anwendbare Gesetze", it: "Leggi applicabili" },
+  execution: { en: "Computation results", fr: "Résultats de calcul", de: "Berechnungsergebnisse", it: "Risultati del calcolo" },
+};
+
+// ============================================================
+// ESSENTIAL FIELDS — fields required for complete computation
+// ============================================================
+const ESSENTIAL_FIELDS = [
+  'canton', 'marital_status', 'num_children', 'age', 'church_member', 'nationality'
+];
+
+// Scans conversation text to find which essential fields are still missing
+function inferMissingEssentialFields(data, conversationText) {
+  const text = conversationText.toLowerCase();
+
+  const cantonPatterns = /\b(zurich|zürich|bern|berne|luzern|lucerne|uri|schwyz|obwalden|nidwalden|glarus|zug|fribourg|freiburg|solothurn|soleure|basel|baselland|schaffhausen|schaffhouse|appenzell|st\.?\s*gallen|graubünden|grisons|aargau|argovie|thurgau|thurgovie|ticino|tessin|vaud|waadt|valais|wallis|neuchâtel|neuenburg|genève|genf|geneva|jura)\b/;
+  const maritalPatterns = /\b(married|single|divorced|widowed|separated|marié|mariée|célibataire|divorcé|divorcée|veuf|veuve|séparé|séparée|verheiratet|ledig|geschieden|verwitwet|getrennt|sposato|sposata|celibe|nubile|divorziato|divorziata|vedovo|vedova)\b/;
+  const childrenPatterns = /\b(\d+)\s*(child|children|kid|kids|enfant|enfants|kinder|kind|figli|figlio|figlia)\b|\b(no\s+children|sans\s+enfants?|keine\s+kinder|senza\s+figli)\b/;
+  const agePatterns = /\b(\d{1,3})\s*(years?\s*old|ans|jahre?\s*alt|anni)\b|\bage[d:]?\s*(\d{1,3})\b|\bâgée?\s*de\s*\d{1,3}\b/;
+  const churchPatterns = /\b(church\s*member|not\s*a?\s*church\s*member|membre\s*d[e']\s*(l['']\s*)?[eé]glise|pas\s*(de\s*)?membre|kirchenmitglied|kein\s*kirchenmitglied|membro\s*della\s*chiesa|non\s*membro)\b/;
+  const nationalityPatterns = /\b(swiss|suisse|schweizer|svizzero|svizzera|french|français|française|german|deutsch|italian|italiano|italiana|austrian|autrichien|autrichienne|portuguese|portugais|portugaise|spanish|espagnol|espagnole|british|american|türk|nationality|nationalité|staatsangehörigkeit|nazionalità)\b/;
+
+  const provided = {};
+  provided.canton = cantonPatterns.test(text);
+  provided.marital_status = maritalPatterns.test(text);
+  provided.num_children = childrenPatterns.test(text);
+  provided.age = agePatterns.test(text);
+  provided.church_member = churchPatterns.test(text);
+  provided.nationality = nationalityPatterns.test(text);
+
+  return ESSENTIAL_FIELDS.filter(f => !provided[f]);
+}
+
+function getFieldLabel(fieldKey, lang) {
+  const entry = fieldLabels[fieldKey];
+  if (entry && entry[lang]) return entry[lang];
+  if (entry && entry.en) return entry.en;
+  return humanizeVariable(fieldKey);
+}
+
+function detectMissingFields(data) {
+  if (data.missing_fields && Array.isArray(data.missing_fields)) {
+    return data.missing_fields;
+  }
+
+  const missing = [];
+  const skipKeys = ["missing_fields", "code_generation", "error", "status"];
+
+  for (const [key, value] of Object.entries(data)) {
+    if (skipKeys.includes(key)) continue;
+    if (key === "execution" && value && typeof value === "object") {
+      const cv = value.computed_values;
+      if (cv && typeof cv === "object") {
+        for (const [cvKey, cvVal] of Object.entries(cv)) {
+          if (cvVal === null) missing.push(cvKey);
+        }
+      }
+    } else if (value === null) {
+      missing.push(key);
+    }
+  }
+
+  return missing;
+}
+
+// ============================================================
+// MISSING FIELDS MESSAGE COMPONENT
+// ============================================================
+function MissingFieldsMessage({ fields, lang }) {
+  const t = i18n[lang] || i18n.en;
+  return (
+    <div className="msg bot">
+      <p>{t.missingFieldsIntro}</p>
+      <ul style={{ margin: "8px 0", paddingLeft: "20px" }}>
+        {fields.map((field, i) => (
+          <li key={i}>{getFieldLabel(field, lang)}</li>
+        ))}
+      </ul>
+      <p>{t.missingFieldsOutro}</p>
+    </div>
+  );
+}
+
+// ============================================================
 // LEGAL ANSWER — fully conversational, flowing prose
 // ============================================================
 function LegalAnswer({ data, lang }) {
@@ -187,7 +310,7 @@ function LegalAnswer({ data, lang }) {
     syllogism,
     applicableLaws,
     articleToComputed,
-    executionFailed: data.execution && !data.execution.success,
+    executionFailed: data.execution && !data.execution.success && !data._suppressExecFailNote,
     lang,
     t,
   });
@@ -270,11 +393,12 @@ function stripTrailingPeriod(s) {
 // ============================================================
 function App() {
   const [view, setView] = useState("hero");
-  const [messages, setMessages] = useState([]); // { type: 'user'|'answer'|'error', text?, data? }
+  const [messages, setMessages] = useState([]); // { type: 'user'|'answer'|'missing_fields'|'error', text?, data?, fields? }
   const [heroInput, setHeroInput] = useState("");
   const [chatInput, setChatInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [lang, setLang] = useState("fr");
+  const [conversationHistory, setConversationHistory] = useState([]);
   const chatBoxRef = useRef(null);
 
   useEffect(() => {
@@ -285,13 +409,35 @@ function App() {
 
   const processQuery = async (text) => {
     setMessages((prev) => [...prev, { type: "user", text }]);
+    const newHistory = [...conversationHistory, text];
+    setConversationHistory(newHistory);
     setIsLoading(true);
 
-    const payload = { case_description: text, execute: true, language: lang };
+    const fullContext = newHistory.join("\n");
+    const payload = { case_description: fullContext, execute: true, language: lang };
 
     try {
       const data = await callBackend(payload);
-      setMessages((prev) => [...prev, { type: "answer", data }]);
+      if (data.execution && !data.execution.success) {
+        const essentialMissing = inferMissingEssentialFields(data, fullContext);
+        if (essentialMissing.length > 0) {
+          data._suppressExecFailNote = true;
+          setMessages((prev) => [
+            ...prev,
+            { type: "answer", data },
+            { type: "missing_fields", fields: essentialMissing },
+          ]);
+        } else {
+          setMessages((prev) => [...prev, { type: "answer", data }]);
+        }
+      } else {
+        const missingFields = detectMissingFields(data);
+        if (missingFields.length > 0) {
+          setMessages((prev) => [...prev, { type: "missing_fields", fields: missingFields }]);
+        } else {
+          setMessages((prev) => [...prev, { type: "answer", data }]);
+        }
+      }
     } catch (err) {
       setMessages((prev) => [
         ...prev,
@@ -319,6 +465,7 @@ function App() {
   const resetChat = () => {
     setMessages([]);
     setHeroInput("");
+    setConversationHistory([]);
     setView("hero");
   };
 
@@ -426,6 +573,9 @@ function App() {
                 }
                 if (msg.type === "answer") {
                   return <LegalAnswer key={i} data={msg.data} lang={lang} />;
+                }
+                if (msg.type === "missing_fields") {
+                  return <MissingFieldsMessage key={i} fields={msg.fields} lang={lang} />;
                 }
                 if (msg.type === "error") {
                   return <div key={i} className="exec-error">{msg.text}</div>;
