@@ -204,6 +204,7 @@
   .missing-fields-submit { margin-top: 12px; display: flex; justify-content: flex-end; }
   .missing-fields-submit button { background: var(--federal-blue); color: white; border: none; padding: 10px 24px; font-family: inherit; font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: background 0.2s; }
   .missing-fields-submit button:hover { background: var(--swiss-red); }
+  .missing-fields-submit button:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* ERROR FOOTNOTE */
   .error-footnote {
@@ -221,6 +222,7 @@
     header { padding: 16px 20px; }
     main { padding: 20px; }
     .hero-footer { flex-direction: column; gap: 10px; align-items: flex-start; }
+    .missing-fields-table td { display: block; width: 100%; }
     .brand-divider, .partner-logo { display: none; }
   }
 </style>
@@ -351,7 +353,8 @@
       yes: "Yes",
       no: "No",
       legalBasis: "Legal basis",
-      processedIn: "Processed in"
+      processedIn: "Processed in",
+      submit: "Submit"
     },
     fr: {
       concretely: "Concrètement,",
@@ -365,7 +368,8 @@
       yes: "Oui",
       no: "Non",
       legalBasis: "Base légale",
-      processedIn: "Traité en"
+      processedIn: "Traité en",
+      submit: "Soumettre"
     },
     de: {
       concretely: "Konkret,",
@@ -379,7 +383,8 @@
       yes: "Ja",
       no: "Nein",
       legalBasis: "Rechtsgrundlage",
-      processedIn: "Verarbeitet in"
+      processedIn: "Verarbeitet in",
+      submit: "Absenden"
     },
     it: {
       concretely: "Concretamente,",
@@ -393,7 +398,8 @@
       yes: "Sì",
       no: "No",
       legalBasis: "Base giuridica",
-      processedIn: "Elaborato in"
+      processedIn: "Elaborato in",
+      submit: "Invia"
     }
   };
 
@@ -567,7 +573,7 @@
       html += '</td><td>' + buildFieldInput(field) + '</td></tr>';
     });
     html += '</table>';
-    html += '<div class="missing-fields-submit"><button type="submit">Submit</button></div>';
+    html += `<div class="missing-fields-submit"><button type="submit">${escapeHtml(t.submit || 'Submit')}</button></div>`;
     html += '</form>';
     return html;
   }
@@ -585,21 +591,66 @@
       anyFilled = true;
       if (type === 'bool') {
         knownParameters[id] = val === 'true';
-      } else if (type === 'int') {
-        knownParameters[id] = parseInt(val, 10);
-      } else if (type === 'float') {
-        knownParameters[id] = parseFloat(val);
+      } else if (type === 'int' || type === 'float' || type === 'number') {
+        knownParameters[id] = Number(val);
       } else {
         knownParameters[id] = val;
       }
     });
     if (!anyFilled) return;
-    // Re-call backend with updated knownParameters
-    const summary = Object.entries(knownParameters)
-      .filter(([k]) => Array.from(inputs).some(el => el.dataset.fieldId === k && el.value.trim()))
-      .map(([k, v]) => `${humanizeVariable(k)}: ${v}`)
-      .join(', ');
-    processQuery(summary);
+    // Disable form after submit and show loading state
+    inputs.forEach(el => { el.disabled = true; });
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = '…'; }
+    // Re-call backend with updated knownParameters (no user message bubble)
+    processQueryWithoutUserMessage();
+  }
+
+  async function processQueryWithoutUserMessage() {
+    const fullContext = initialDescription || '';
+    showTyping();
+    const payload = { case_description: fullContext, execute: true, language: currentLang };
+    if (Object.keys(knownParameters).length > 0) {
+      payload.known_parameters = knownParameters;
+    }
+    try {
+      const data = await callBackend(payload);
+      hideTyping();
+      if (data.input_parameters) {
+        Object.values(data.input_parameters).forEach(params => {
+          if (params && typeof params === 'object') {
+            Object.entries(params).forEach(([k, v]) => {
+              if (v !== null && v !== undefined) knownParameters[k] = v;
+            });
+          }
+        });
+      }
+      if (data.error) {
+        const hasLaws = Array.isArray(data.applicable_laws) && data.applicable_laws.length > 0;
+        if (hasLaws) {
+          data._errorFootnote = data.error;
+          pendingFields = [];
+          addLegalAnswer(data);
+        } else {
+          addBotMessage(data.error);
+        }
+      } else {
+        const missing = Array.isArray(data.missing_parameters) ? data.missing_parameters : [];
+        if (missing.length > 0) {
+          pendingFields = missing;
+          addBotHtml(buildMissingFieldsHtml(missing, currentLang));
+        } else {
+          pendingFields = [];
+          addLegalAnswer(data);
+        }
+      }
+    } catch (err) {
+      hideTyping();
+      const errDiv = document.createElement('div');
+      errDiv.className = 'exec-error';
+      errDiv.innerText = 'Backend error: ' + err.message;
+      document.getElementById('chatBox').appendChild(errDiv);
+    }
   }
 
   function addBotMessage(text) {

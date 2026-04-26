@@ -725,6 +725,12 @@ select.field-input {
   cursor: pointer;
 }
 
+.field-input:disabled {
+  background: var(--paper-warm);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
 .missing-fields-submit {
   margin-top: 12px;
   display: flex;
@@ -771,4 +777,6 @@ select.field-input {
   .main { padding: 20px; }
   .hero-footer { flex-direction: column; gap: 10px; align-items: flex-start; }
   .brand-divider, .partner-logo { display: none; }
+  .mf-row { flex-direction: column; }
+  .missing-fields-table td { display: block; width: 100%; }
 }

@@ -230,7 +230,8 @@ function getFieldLabel(fieldKey, lang) {
 // ============================================================
 // FIELD INPUT COMPONENT
 // ============================================================
-function FieldInput({ field, value, onChange }) {
+function FieldInput({ field, value, onChange, lang }) {
+  const t = i18n[lang] || i18n.en;
   const id = typeof field === "object" ? field.id : field;
   const type = (typeof field === "object" ? field.type : "str") || "str";
   const allowed = typeof field === "object" ? field.allowed_values : null;
@@ -238,16 +239,16 @@ function FieldInput({ field, value, onChange }) {
   if (type === "bool") {
     return (
       <select className="field-input" value={value} onChange={(e) => onChange(id, e.target.value)}>
-        <option value="">—</option>
-        <option value="true">{i18n.en.yes}</option>
-        <option value="false">{i18n.en.no}</option>
+        <option value="">{"\u2014"}</option>
+        <option value="true">{t.yes}</option>
+        <option value="false">{t.no}</option>
       </select>
     );
   }
   if (allowed && allowed.length > 0) {
     return (
       <select className="field-input" value={value} onChange={(e) => onChange(id, e.target.value)}>
-        <option value="">—</option>
+        <option value="">{"\u2014"}</option>
         {allowed.map((v) => (
           <option key={v} value={String(v)}>{String(v)}</option>
         ))}
@@ -327,7 +328,7 @@ function MissingFieldsForm({ fields, lang, onSubmit, disabled }) {
                     {lawRef && <span className="law-ref">({lawRef})</span>}
                   </td>
                   <td>
-                    <FieldInput field={field} value={values[id]} onChange={handleChange} />
+                    <FieldInput field={field} value={values[id]} onChange={handleChange} lang={lang} />
                   </td>
                 </tr>
               );
@@ -610,6 +611,64 @@ function App() {
     }
   };
 
+  // Silent re-call: merges form params into knownParameters, re-calls backend
+  // without adding a user message or appending to context
+  const handleFormSubmit = async (parsed) => {
+    const merged = { ...knownParameters, ...parsed };
+    setKnownParameters(merged);
+    setIsLoading(true);
+
+    const payload = {
+      case_description: initialDescription,
+      execute: true,
+      language: lang,
+      known_parameters: merged,
+    };
+
+    try {
+      const data = await callBackend(payload);
+
+      if (data.input_parameters) {
+        const updated = { ...merged };
+        Object.values(data.input_parameters).forEach((params) => {
+          if (params && typeof params === "object") {
+            Object.entries(params).forEach(([k, v]) => {
+              if (v !== null && v !== undefined) updated[k] = v;
+            });
+          }
+        });
+        setKnownParameters(updated);
+      }
+
+      if (data.error) {
+        const hasLaws = Array.isArray(data.applicable_laws) && data.applicable_laws.length > 0;
+        if (hasLaws) {
+          data._errorFootnote = data.error;
+          setPendingFields([]);
+          setMessages((prev) => [...prev, { type: "answer", data }]);
+        } else {
+          setMessages((prev) => [...prev, { type: "bot_error", text: data.error }]);
+        }
+      } else {
+        const missing = Array.isArray(data.missing_parameters) ? data.missing_parameters : [];
+        if (missing.length > 0) {
+          setPendingFields(missing);
+          setMessages((prev) => [...prev, { type: "missing_fields", fields: missing }]);
+        } else {
+          setPendingFields([]);
+          setMessages((prev) => [...prev, { type: "answer", data }]);
+        }
+      }
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        { type: "error", text: "Backend error: " + err.message },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const startChat = () => {
     const text = heroInput.trim();
     if (!text) return;
@@ -745,13 +804,7 @@ function App() {
                       fields={msg.fields}
                       lang={lang}
                       disabled={isLoading}
-                      onSubmit={(parsed) => {
-                        setKnownParameters((prev) => ({ ...prev, ...parsed }));
-                        const summary = Object.entries(parsed)
-                          .map(([k, v]) => `${humanizeVariable(k)}: ${v}`)
-                          .join(", ");
-                        processQuery(summary);
-                      }}
+                      onSubmit={handleFormSubmit}
                     />
                   );
                 }
