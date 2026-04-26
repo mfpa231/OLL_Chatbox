@@ -8,7 +8,7 @@
 ## UX / Accessibility
 - [ ] **4. Add field validation feedback** — Show inline error messages for invalid inputs (e.g. non-numeric in number fields, out-of-range values) instead of silent rejection.
 - [ ] **5. Loading indicator during API calls** — Show a spinner or "thinking..." indicator while waiting for the backend response after form submission.
-- [ ] **6. Keyboard navigation for forms** — Ensure Tab order is logical and Enter submits the form from any field.
+- [x] **6. Keyboard navigation for forms** — Ensure Tab order is logical and Enter submits the form from any field.
 - [ ] **7. ARIA labels and roles** — Add `aria-label`, `role="alert"` for errors, `aria-live` for dynamic content to improve screen reader support.
 - [ ] **8. Improve language switcher feedback** — Currently the language switch is silent; consider showing a brief toast or visual cue confirming the change.
 
