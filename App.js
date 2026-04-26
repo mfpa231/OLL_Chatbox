@@ -213,10 +213,10 @@ function inferMissingEssentialFields(data, conversationText) {
 
   const cantonPatterns = /\b(zurich|zürich|bern|berne|luzern|lucerne|uri|schwyz|obwalden|nidwalden|glarus|zug|fribourg|freiburg|solothurn|soleure|basel|baselland|schaffhausen|schaffhouse|appenzell|st\.?\s*gallen|graubünden|grisons|aargau|argovie|thurgau|thurgovie|ticino|tessin|vaud|waadt|valais|wallis|neuchâtel|neuenburg|genève|genf|geneva|jura)\b/;
   const maritalPatterns = /\b(married|single|divorced|widowed|separated|marié|mariée|célibataire|divorcé|divorcée|veuf|veuve|séparé|séparée|verheiratet|ledig|geschieden|verwitwet|getrennt|sposato|sposata|celibe|nubile|divorziato|divorziata|vedovo|vedova)\b/;
-  const childrenPatterns = /\b(\d+)\s*(child|children|kid|kids|enfant|enfants|kinder|kind|figli|figlio|figlia)\b|\b(no\s+children|sans\s+enfants?|keine\s+kinder|senza\s+figli)\b/;
-  const agePatterns = /\b(\d{1,3})\s*(years?\s*old|ans|jahre?\s*alt|anni)\b|\bage[d:]?\s*(\d{1,3})\b|\bâgée?\s*de\s*\d{1,3}\b/;
-  const churchPatterns = /\b(church\s*member|not\s*a?\s*church\s*member|membre\s*d[e']\s*(l['']\s*)?[eé]glise|pas\s*(de\s*)?membre|kirchenmitglied|kein\s*kirchenmitglied|membro\s*della\s*chiesa|non\s*membro)\b/;
-  const nationalityPatterns = /\b(swiss|suisse|schweizer|svizzero|svizzera|french|français|française|german|deutsch|italian|italiano|italiana|austrian|autrichien|autrichienne|portuguese|portugais|portugaise|spanish|espagnol|espagnole|british|american|türk|nationality|nationalité|staatsangehörigkeit|nazionalità)\b/;
+  const childrenPatterns = /\b(\d+)\s*(child|children|kid|kids|enfant|enfants|kinder|kind|figli|figlio|figlia)\b|\b(no\s+children|sans\s+enfants?|keine\s+kinder|senza\s+figli)\b|\b([0-9])\b/;
+  const agePatterns = /\b(\d{1,3})\s*(years?\s*old|ans|jahre?\s*alt|anni)\b|\bage[d:]?\s*(\d{1,3})\b|\bâgée?\s*de\s*\d{1,3}\b|\b([1-9]\d)\b/;
+  const churchPatterns = /\b(church\s*member|not\s*a?\s*church\s*member|membre\s*d[e']\s*(l['']\s*)?[eé]glise|pas\s*(de\s*)?membre|kirchenmitglied|kein\s*kirchenmitglied|membro\s*della\s*chiesa|non\s*membro|catholic|catholique|katholisch|cattolico|cattolica|protestant|protestante|evangelisch|réformée?|reformiert|reformed|orthodox|orthodoxe|atheist|athée?|no\s*religion|sans\s*religion|konfessionslos|keine\s*religion|senza\s*religione|agnostic|agnostique)\b/;
+  const nationalityPatterns = /\b(swiss|suisse|schweizer|svizzero|svizzera|french|français|française|german|deutsch|deutsche|italian|italiano|italiana|austrian|autrichien|autrichienne|portuguese|portugais|portugaise|spanish|espagnol|espagnole|british|american|türk|türkisch|belgian|belge|belgisch|dutch|néerlandais|néerlandaise|niederländisch|luxembourgish|luxembourgeois|luxembourgeoise|serbian|serbe|serbisch|croatian|croate|kroatisch|kosovan|kosovar|albanian|albanais|albanaise|albanisch|polish|polonais|polonaise|polnisch|romanian|roumain|roumaine|rumänisch|russian|russe|russisch|chinese|chinois|chinoise|chinesisch|indian|indien|indienne|indisch|brazilian|brésilien|brésilienne|brasilianisch|japanese|japonais|japonaise|japanisch|korean|coréen|coréenne|koreanisch|african|africain|africaine|afrikanisch|eritrean|érythréen|érythréenne|eritreisch|syrian|syrien|syrienne|syrisch|afghan|afghane|afghanisch|iraqi|irakien|irakienne|irakisch|iranian|iranien|iranienne|iranisch|nationality|nationalité|staatsangehörigkeit|nazionalità)\b/;
 
   const provided = {};
   provided.canton = cantonPatterns.test(text);
@@ -242,18 +242,11 @@ function detectMissingFields(data) {
   }
 
   const missing = [];
-  const skipKeys = ["missing_fields", "code_generation", "error", "status"];
+  const skipKeys = ["missing_fields", "code_generation", "error", "status", "execution", "syllogistic_reasoning", "applicable_laws"];
 
   for (const [key, value] of Object.entries(data)) {
     if (skipKeys.includes(key)) continue;
-    if (key === "execution" && value && typeof value === "object") {
-      const cv = value.computed_values;
-      if (cv && typeof cv === "object") {
-        for (const [cvKey, cvVal] of Object.entries(cv)) {
-          if (cvVal === null) missing.push(cvKey);
-        }
-      }
-    } else if (value === null) {
+    if (value === null) {
       missing.push(key);
     }
   }
@@ -421,10 +414,8 @@ function App() {
       if (data.execution && !data.execution.success) {
         const essentialMissing = inferMissingEssentialFields(data, fullContext);
         if (essentialMissing.length > 0) {
-          data._suppressExecFailNote = true;
           setMessages((prev) => [
             ...prev,
-            { type: "answer", data },
             { type: "missing_fields", fields: essentialMissing },
           ]);
         } else {
