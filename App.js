@@ -34,6 +34,11 @@ const i18n = {
     noLaws: "I couldn't identify any applicable Swiss federal law articles for this situation. Could you give me more details?",
     missingFieldsIntro: "To provide a complete legal analysis, I still need the following information:",
     missingFieldsOutro: "Please provide these details so I can give you a precise answer.",
+    computedResults: "Computed results:",
+    yes: "Yes",
+    no: "No",
+    legalBasis: "Legal basis",
+    processedIn: "Processed in",
   },
   fr: {
     concretely: "Concrètement,",
@@ -44,6 +49,11 @@ const i18n = {
     noLaws: "Je n'ai pas pu identifier d'articles de droit fédéral applicables à cette situation. Pourriez-vous me donner plus de détails ?",
     missingFieldsIntro: "Pour fournir une analyse juridique complète, j'ai encore besoin des informations suivantes :",
     missingFieldsOutro: "Veuillez fournir ces détails afin que je puisse vous donner une réponse précise.",
+    computedResults: "Résultats calculés :",
+    yes: "Oui",
+    no: "Non",
+    legalBasis: "Base légale",
+    processedIn: "Traité en",
   },
   de: {
     concretely: "Konkret,",
@@ -54,6 +64,11 @@ const i18n = {
     noLaws: "Für diese Situation konnten keine anwendbaren Artikel des Bundesrechts identifiziert werden. Könnten Sie mir weitere Details geben?",
     missingFieldsIntro: "Um eine vollständige rechtliche Analyse zu erstellen, benötige ich noch folgende Informationen:",
     missingFieldsOutro: "Bitte geben Sie diese Details an, damit ich Ihnen eine genaue Antwort geben kann.",
+    computedResults: "Berechnete Ergebnisse:",
+    yes: "Ja",
+    no: "Nein",
+    legalBasis: "Rechtsgrundlage",
+    processedIn: "Verarbeitet in",
   },
   it: {
     concretely: "Concretamente,",
@@ -64,6 +79,11 @@ const i18n = {
     noLaws: "Non sono riuscito a identificare articoli di diritto federale applicabili a questa situazione. Potrebbe fornirmi maggiori dettagli?",
     missingFieldsIntro: "Per fornire un'analisi giuridica completa, ho ancora bisogno delle seguenti informazioni:",
     missingFieldsOutro: "Vi prego di fornire questi dettagli affinché possa darvi una risposta precisa.",
+    computedResults: "Risultati calcolati:",
+    yes: "Sì",
+    no: "No",
+    legalBasis: "Base giuridica",
+    processedIn: "Elaborato in",
   },
 };
 
@@ -168,8 +188,8 @@ function articleMatchesApplicable(blockArticle, applicableLaws) {
 
 const SUGGESTIONS = [
   "Anna works in Zurich earning 85000 CHF/year as an employee",
-  "How do I renew my B residence permit?",
-  "What are the requirements for Swiss naturalization?",
+  "My neighbor's tree fell on my car during a storm, who is liable for the damage?",
+  "I'm a 20-year-old student living in Bern, can I get a scholarship for my university studies?",
 ];
 
 // ============================================================
@@ -200,187 +220,11 @@ const fieldLabels = {
   execution: { en: "Computation results", fr: "Résultats de calcul", de: "Berechnungsergebnisse", it: "Risultati del calcolo" },
 };
 
-// ============================================================
-// ESSENTIAL FIELDS — fields required for complete computation
-// ============================================================
-const ESSENTIAL_FIELDS = [
-  'canton', 'marital_status', 'num_children', 'age', 'church_member', 'nationality'
-];
-
-const FIELD_PATTERNS = {
-  canton: /\b(zurich|zürich|bern|berne|luzern|lucerne|uri|schwyz|obwalden|nidwalden|glarus|zug|fribourg|freiburg|solothurn|soleure|basel|baselland|schaffhausen|schaffhouse|appenzell|st\.?\s*gallen|graubünden|grisons|aargau|argovie|thurgau|thurgovie|ticino|tessin|vaud|waadt|valais|wallis|neuchâtel|neuenburg|genève|genf|geneva|jura)\b/,
-  marital_status: /\b(married|single|divorced|widowed|separated|marié|mariée|célibataire|divorcé|divorcée|veuf|veuve|séparé|séparée|verheiratet|ledig|geschieden|verwitwet|getrennt|sposato|sposata|celibe|nubile|divorziato|divorziata|vedovo|vedova)\b/,
-  num_children: /\b(\d+)\s*(child|children|kid|kids|enfant|enfants|kinder|kind|figli|figlio|figlia)\b|\b(no\s+children|sans\s+enfants?|keine\s+kinder|senza\s+figli)\b|\b([0-9])\b/,
-  age: /\b(\d{1,3})\s*(years?\s*old|ans|jahre?\s*alt|anni)\b|\bage[d:]?\s*(\d{1,3})\b|\bâgée?\s*de\s*\d{1,3}\b|\b([1-9]\d)\b/,
-  church_member: /\b(church\s*member|not\s*a?\s*church\s*member|membre\s*d[e']\s*(l['']\s*)?[eé]glise|pas\s*(de\s*)?membre|kirchenmitglied|kein\s*kirchenmitglied|membro\s*della\s*chiesa|non\s*membro|catholic|catholique|katholisch|cattolico|cattolica|protestant|protestante|evangelisch|réformée?|reformiert|reformed|orthodox|orthodoxe|atheist|athée?|no\s*religion|sans\s*religion|konfessionslos|keine\s*religion|senza\s*religione|agnostic|agnostique)\b/,
-  nationality: /\b(swiss|suisse|schweizer|svizzero|svizzera|french|français|française|german|deutsch|deutsche|italian|italiano|italiana|austrian|autrichien|autrichienne|portuguese|portugais|portugaise|spanish|espagnol|espagnole|british|american|türk|türkisch|belgian|belge|belgisch|dutch|néerlandais|néerlandaise|niederländisch|luxembourgish|luxembourgeois|luxembourgeoise|serbian|serbe|serbisch|croatian|croate|kroatisch|kosovan|kosovar|albanian|albanais|albanaise|albanisch|polish|polonais|polonaise|polnisch|romanian|roumain|roumaine|rumänisch|russian|russe|russisch|chinese|chinois|chinoise|chinesisch|indian|indien|indienne|indisch|brazilian|brésilien|brésilienne|brasilianisch|japanese|japonais|japonaise|japanisch|korean|coréen|coréenne|koreanisch|african|africain|africaine|afrikanisch|eritrean|érythréen|érythréenne|eritreisch|syrian|syrien|syrienne|syrisch|afghan|afghane|afghanisch|iraqi|irakien|irakienne|irakisch|iranian|iranien|iranienne|iranisch|nationality|nationalité|staatsangehörigkeit|nazionalità)\b/
-};
-
-const NUMERIC_FIELDS = ['age', 'num_children'];
-
-// Scans conversation text to find which essential fields are still missing
-function inferMissingEssentialFields(data, conversationText) {
-  const text = conversationText.toLowerCase();
-  return ESSENTIAL_FIELDS.filter(f => !FIELD_PATTERNS[f].test(text));
-}
-
-function canonicalize(field, rawText, matchedSlice) {
-  const t = (matchedSlice || rawText || "").toLowerCase().trim();
-  if (field === "canton") {
-    const cantonMap = {
-      zurich: "Zurich", "zürich": "Zurich",
-      bern: "Bern", berne: "Bern",
-      luzern: "Luzern", lucerne: "Luzern",
-      "genève": "Geneva", genf: "Geneva", geneva: "Geneva",
-      vaud: "Vaud", waadt: "Vaud",
-      valais: "Valais", wallis: "Valais",
-      ticino: "Ticino", tessin: "Ticino",
-      fribourg: "Fribourg", freiburg: "Fribourg",
-      "neuchâtel": "Neuchâtel", neuenburg: "Neuchâtel",
-      basel: "Basel", baselland: "Basel-Land",
-      aargau: "Aargau", argovie: "Aargau",
-      thurgau: "Thurgau", thurgovie: "Thurgau",
-      "graubünden": "Graubünden", grisons: "Graubünden",
-      jura: "Jura", solothurn: "Solothurn", soleure: "Solothurn",
-      schaffhausen: "Schaffhausen", schaffhouse: "Schaffhausen",
-      schwyz: "Schwyz", zug: "Zug", uri: "Uri",
-      obwalden: "Obwalden", nidwalden: "Nidwalden", glarus: "Glarus",
-      appenzell: "Appenzell"
-    };
-    for (const k in cantonMap) if (t.includes(k)) return cantonMap[k];
-    return rawText.trim();
-  }
-  if (field === "marital_status") {
-    if (/\b(married|marié|mariée|verheiratet|sposato|sposata)\b/.test(t)) return "married";
-    if (/\b(single|célibataire|ledig|celibe|nubile)\b/.test(t)) return "single";
-    if (/\b(divorced|divorcé|divorcée|geschieden|divorziato|divorziata)\b/.test(t)) return "divorced";
-    if (/\b(widowed|veuf|veuve|verwitwet|vedovo|vedova)\b/.test(t)) return "widowed";
-    if (/\b(separated|séparé|séparée|getrennt)\b/.test(t)) return "separated";
-    return rawText.trim();
-  }
-  if (field === "nationality") {
-    if (/\b(swiss|suisse|schweizer|svizzero|svizzera)\b/.test(t)) return "Swiss";
-    if (/\b(french|français|française)\b/.test(t)) return "French";
-    if (/\b(german|deutsch|deutsche)\b/.test(t)) return "German";
-    if (/\b(italian|italiano|italiana)\b/.test(t)) return "Italian";
-    if (/\b(portuguese|portugais|portugaise)\b/.test(t)) return "Portuguese";
-    if (/\b(spanish|espagnol|espagnole)\b/.test(t)) return "Spanish";
-    if (/\b(austrian|autrichien|autrichienne)\b/.test(t)) return "Austrian";
-    if (/\b(british)\b/.test(t)) return "British";
-    if (/\b(american)\b/.test(t)) return "American";
-    return rawText.trim();
-  }
-  if (field === "church_member") {
-    if (/\b(not\s*a?\s*church\s*member|pas\s*(de\s*)?membre|kein\s*kirchenmitglied|non\s*membro|atheist|athée?|no\s*religion|sans\s*religion|konfessionslos|keine\s*religion|senza\s*religione|agnostic|agnostique|no|non|nein)\b/.test(t)) return "no";
-    return "yes";
-  }
-  return rawText.trim();
-}
-
-function parseReplyForFields(text, pending) {
-  const lower = text.toLowerCase();
-  const out = {};
-
-  const pendingArr = Array.isArray(pending) ? pending : [];
-  for (const field of ESSENTIAL_FIELDS) {
-    const m = lower.match(FIELD_PATTERNS[field]);
-    if (!m) continue;
-    if (field === "age") {
-      // m[1]/m[3] = explicit "32 years old"/"age 32"; m[4] = loose "\b\d\d\b" — accept loose only when age is pending
-      const explicit = m[1] || m[3];
-      if (explicit) {
-        const num = parseInt(explicit, 10);
-        if (!isNaN(num)) out.age = num;
-      } else if (pendingArr.includes("age") && m[4]) {
-        const num = parseInt(m[4], 10);
-        if (!isNaN(num)) out.age = num;
-      }
-    } else if (field === "num_children") {
-      if (/no\s+children|sans\s+enfants?|keine\s+kinder|senza\s+figli/.test(m[0])) {
-        out.num_children = 0;
-      } else if (m[1]) {
-        const num = parseInt(m[1], 10);
-        if (!isNaN(num)) out.num_children = num;
-      } else if (pendingArr.includes("num_children") && m[4]) {
-        const num = parseInt(m[4], 10);
-        if (!isNaN(num)) out.num_children = num;
-      }
-    } else {
-      out[field] = canonicalize(field, text, m[0]);
-    }
-  }
-
-  // Bare integer fallback: priority age, then num_children — only if pending and
-  // no numeric field was already filled by the loop above.
-  const bare = text.trim().match(/^\d{1,3}$/);
-  if (bare && pendingArr.length && out.age === undefined && out.num_children === undefined) {
-    const n = parseInt(bare[0], 10);
-    if (pendingArr.includes("age")) {
-      out.age = n;
-    } else if (pendingArr.includes("num_children")) {
-      out.num_children = n;
-    }
-  }
-
-  if (out.church_member === undefined && Array.isArray(pending) && pending.includes("church_member")) {
-    if (/^(yes|oui|ja|si)\b/i.test(text.trim())) out.church_member = "yes";
-    else if (/^(no|non|nein)\b/i.test(text.trim())) out.church_member = "no";
-  }
-
-  if (Array.isArray(pending)) {
-    for (const f of pending) {
-      if (NUMERIC_FIELDS.includes(f)) continue;
-      if (out[f] !== undefined) continue;
-      if (Object.keys(out).length > 0) break;
-      out[f] = canonicalize(f, text, text);
-      break;
-    }
-  }
-
-  return out;
-}
-
-function buildCaseDescription(initial, facts) {
-  const lines = [];
-  if (facts.age !== undefined) lines.push("Age: " + facts.age + " years old.");
-  if (facts.marital_status !== undefined) lines.push("Marital status: " + facts.marital_status + ".");
-  if (facts.num_children !== undefined) {
-    lines.push(facts.num_children === 0
-      ? "Number of children: no children."
-      : "Number of children: " + facts.num_children + " children.");
-  }
-  if (facts.canton !== undefined) lines.push("Canton: " + facts.canton + ".");
-  if (facts.church_member !== undefined) {
-    lines.push(facts.church_member === "no" ? "Not a church member." : "Church member: yes.");
-  }
-  if (facts.nationality !== undefined) lines.push("Nationality: " + facts.nationality + ".");
-  const factsBlock = lines.join(" ");
-  return factsBlock ? (initial.trim() + "\n\n" + factsBlock) : initial.trim();
-}
-
 function getFieldLabel(fieldKey, lang) {
   const entry = fieldLabels[fieldKey];
   if (entry && entry[lang]) return entry[lang];
   if (entry && entry.en) return entry.en;
   return humanizeVariable(fieldKey);
-}
-
-function detectMissingFields(data) {
-  if (data.missing_fields && Array.isArray(data.missing_fields)) {
-    return data.missing_fields;
-  }
-
-  const missing = [];
-  const skipKeys = ["missing_fields", "code_generation", "error", "status", "execution", "syllogistic_reasoning", "applicable_laws"];
-
-  for (const [key, value] of Object.entries(data)) {
-    if (skipKeys.includes(key)) continue;
-    if (value === null) {
-      missing.push(key);
-    }
-  }
-
-  return missing;
 }
 
 // ============================================================
@@ -392,9 +236,18 @@ function MissingFieldsMessage({ fields, lang }) {
     <div className="msg bot">
       <p>{t.missingFieldsIntro}</p>
       <ul style={{ margin: "8px 0", paddingLeft: "20px" }}>
-        {fields.map((field, i) => (
-          <li key={i}>{getFieldLabel(field, lang)}</li>
-        ))}
+        {fields.map((field, i) => {
+          const label = typeof field === 'object'
+            ? (field.description || getFieldLabel(field.id, lang))
+            : getFieldLabel(field, lang);
+          const lawRef = typeof field === 'object' ? field.law_reference : null;
+          return (
+            <li key={i}>
+              {label}
+              {lawRef && <span className="law-ref">({lawRef})</span>}
+            </li>
+          );
+        })}
       </ul>
       <p>{t.missingFieldsOutro}</p>
     </div>
@@ -404,6 +257,18 @@ function MissingFieldsMessage({ fields, lang }) {
 // ============================================================
 // LEGAL ANSWER — fully conversational, flowing prose
 // ============================================================
+function formatComputedValue(value, variable, t) {
+  if (typeof value === "boolean") return value ? t.yes : t.no;
+  if (typeof value === "number") {
+    const formatted = Number.isInteger(value)
+      ? value.toLocaleString()
+      : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    const monetary = /amount|contribution|salary|income|wage|tax|chf|franc|betrag|beitrag|revenu|salaire|reddito/i;
+    return monetary.test(variable) ? `CHF ${formatted}` : formatted;
+  }
+  return String(value);
+}
+
 function LegalAnswer({ data, lang }) {
   const t = i18n[lang] || i18n.en;
   const syllogism = parseSyllogism(data.syllogistic_reasoning);
@@ -428,20 +293,83 @@ function LegalAnswer({ data, lang }) {
     );
   }
 
-  const text = composeNaturalReply({
-    syllogism,
-    applicableLaws,
-    articleToComputed,
-    executionFailed: data.execution && !data.execution.success && !data._suppressExecFailNote,
-    lang,
-    t,
-  });
+  // Use legal_reasoning from server if available, fallback to client-side compose
+  let mainParagraphs;
+  const hasLegalReasoning = typeof data.legal_reasoning === "string" && data.legal_reasoning.trim().length > 0;
+
+  if (hasLegalReasoning) {
+    mainParagraphs = data.legal_reasoning.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
+  } else {
+    mainParagraphs = composeNaturalReply({
+      syllogism,
+      applicableLaws,
+      articleToComputed,
+      executionFailed: data.execution && !data.execution.success && !data._suppressExecFailNote,
+      lang,
+      t,
+    });
+  }
+
+  // Excluded articles paragraph (from syllogism, always)
+  const excludedBlocks = syllogism.filter(
+    (s) => s.article && !applicableLaws.some((l) => s.article.startsWith(l))
+  );
+  let excludedParagraph = null;
+  if (hasLegalReasoning && excludedBlocks.length) {
+    const excludedSentences = excludedBlocks
+      .map((b) => {
+        const conclusion = b.premises.find((p) => p.type === "conclusion");
+        return conclusion ? stripTrailingPeriod(conclusion.text) + "." : null;
+      })
+      .filter(Boolean);
+    if (excludedSentences.length) {
+      excludedParagraph = `${t.alsoConsidered} ${excludedSentences.join(" ")}`;
+    }
+  }
+
+  // Computed values block — show all, skip if legal_reasoning already contains them
+  const cvEntries = Object.entries(computedValues);
+  const legalReasoningText = hasLegalReasoning ? data.legal_reasoning : "";
+  const showComputed = data.execution?.success && cvEntries.length > 0 &&
+    !cvEntries.every(([, v]) => legalReasoningText.includes(String(v)));
 
   return (
     <div className="msg bot">
-      {text.map((paragraph, i) => (
+      {mainParagraphs.map((paragraph, i) => (
         <p key={i}>{paragraph}</p>
       ))}
+
+      {excludedParagraph && <p>{excludedParagraph}</p>}
+
+      {showComputed && (
+        <div className="computed-results">
+          <strong>{t.computedResults}</strong>
+          <ul>
+            {cvEntries.map(([variable, value]) => (
+              <li key={variable}>
+                <span className="label">{humanizeVariable(variable)}: </span>
+                <span className="value">{formatComputedValue(value, variable, t)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {applicableLaws.length > 0 && (
+        <div className="legal-citations">
+          {t.legalBasis}: {applicableLaws.join(", ")}
+        </div>
+      )}
+
+      {data._errorFootnote && (
+        <div className="error-footnote">{data._errorFootnote}</div>
+      )}
+
+      {data.processing_time_seconds != null && (
+        <div className="processing-time">
+          {t.processedIn} {data.processing_time_seconds.toFixed(1)}s
+        </div>
+      )}
     </div>
   );
 }
@@ -521,8 +449,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [lang, setLang] = useState("fr");
   const [pendingFields, setPendingFields] = useState([]);
-  const [collectedFacts, setCollectedFacts] = useState({});
   const [initialDescription, setInitialDescription] = useState("");
+  const [knownParameters, setKnownParameters] = useState({});
   const chatBoxRef = useRef(null);
 
   useEffect(() => {
@@ -534,67 +462,54 @@ function App() {
   const processQuery = async (text) => {
     setMessages((prev) => [...prev, { type: "user", text }]);
 
-    let nextInitial = initialDescription;
-    let nextFacts = collectedFacts;
     if (!initialDescription) {
-      nextInitial = text;
       setInitialDescription(text);
-    } else {
-      const updates = parseReplyForFields(text, pendingFields);
-      nextFacts = { ...collectedFacts, ...updates };
-      setCollectedFacts(nextFacts);
     }
-
-    const fullContext = buildCaseDescription(nextInitial, nextFacts);
+    const fullContext = initialDescription
+      ? initialDescription + "\n\n" + text
+      : text;
     setIsLoading(true);
 
     const payload = { case_description: fullContext, execute: true, language: lang };
+    if (Object.keys(knownParameters).length > 0) {
+      payload.known_parameters = knownParameters;
+    }
 
     try {
       const data = await callBackend(payload);
-      const backendMissing = Array.isArray(data.missing_fields) ? data.missing_fields : [];
-      if (backendMissing.length > 0) {
-        setPendingFields(backendMissing.filter((f) => ESSENTIAL_FIELDS.includes(f)));
-        setMessages((prev) => [
-          ...prev,
-          { type: "missing_fields", fields: backendMissing },
-        ]);
-      } else if (data.execution && !data.execution.success) {
-        const essentialMissing = inferMissingEssentialFields(data, fullContext);
-        if (essentialMissing.length > 0) {
-          setPendingFields(essentialMissing.slice());
-          setMessages((prev) => [
-            ...prev,
-            { type: "missing_fields", fields: essentialMissing },
-          ]);
-        } else {
-          const backendMissing = detectMissingFields(data);
-          if (backendMissing.length > 0) {
-            setMessages((prev) => [
-              ...prev,
-              { type: "missing_fields", fields: backendMissing },
-            ]);
-          } else {
-            setMessages((prev) => [...prev, { type: "answer", data }]);
+
+      // Merge input_parameters into knownParameters for follow-ups
+      if (data.input_parameters) {
+        const merged = { ...knownParameters };
+        Object.values(data.input_parameters).forEach((params) => {
+          if (params && typeof params === "object") {
+            Object.entries(params).forEach(([k, v]) => {
+              if (v !== null && v !== undefined) merged[k] = v;
+            });
           }
+        });
+        setKnownParameters(merged);
+      }
+
+      // Handle top-level error from backend
+      if (data.error) {
+        const hasLaws = Array.isArray(data.applicable_laws) && data.applicable_laws.length > 0;
+        if (hasLaws) {
+          // Show legal answer with error as footnote
+          data._errorFootnote = data.error;
+          setPendingFields([]);
+          setMessages((prev) => [...prev, { type: "answer", data }]);
+        } else {
+          setMessages((prev) => [...prev, { type: "bot_error", text: data.error }]);
         }
       } else {
-        const missingFields = detectMissingFields(data);
-        if (missingFields.length > 0) {
-          setPendingFields(missingFields.filter((f) => ESSENTIAL_FIELDS.includes(f)));
-          setMessages((prev) => [...prev, { type: "missing_fields", fields: missingFields }]);
+        const missing = Array.isArray(data.missing_parameters) ? data.missing_parameters : [];
+        if (missing.length > 0) {
+          setPendingFields(missing);
+          setMessages((prev) => [...prev, { type: "missing_fields", fields: missing }]);
         } else {
-          // Backend returned a successful response but no applicable laws — ask for specifics
-          // instead of the vague "give me more details" noLaws message.
-          const noLaws = !Array.isArray(data.applicable_laws) || data.applicable_laws.length === 0;
-          const essentialMissing = noLaws ? inferMissingEssentialFields(data, fullContext) : [];
-          if (essentialMissing.length > 0) {
-            setPendingFields(essentialMissing.slice());
-            setMessages((prev) => [...prev, { type: "missing_fields", fields: essentialMissing }]);
-          } else {
-            setPendingFields([]);
-            setMessages((prev) => [...prev, { type: "answer", data }]);
-          }
+          setPendingFields([]);
+          setMessages((prev) => [...prev, { type: "answer", data }]);
         }
       }
     } catch (err) {
@@ -625,8 +540,8 @@ function App() {
     setMessages([]);
     setHeroInput("");
     setPendingFields([]);
-    setCollectedFacts({});
     setInitialDescription("");
+    setKnownParameters({});
     setView("hero");
   };
 
@@ -711,7 +626,7 @@ function App() {
               </div>
               <div className="chat-header-actions">
                 <div className="lang-toggle">
-                  {["en", "fr", "de"].map((l) => (
+                  {["en", "fr", "de", "it"].map((l) => (
                     <button
                       key={l}
                       className={lang === l ? "active" : ""}
@@ -737,6 +652,9 @@ function App() {
                 }
                 if (msg.type === "missing_fields") {
                   return <MissingFieldsMessage key={i} fields={msg.fields} lang={lang} />;
+                }
+                if (msg.type === "bot_error") {
+                  return <div key={i} className="msg bot"><p>{msg.text}</p></div>;
                 }
                 if (msg.type === "error") {
                   return <div key={i} className="exec-error">{msg.text}</div>;

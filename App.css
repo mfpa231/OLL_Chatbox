@@ -606,6 +606,80 @@ body::before {
   30% { transform: translateY(-6px); opacity: 1; }
 }
 
+/* COMPUTED RESULTS BLOCK */
+.computed-results {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(11, 47, 92, 0.04);
+  border: 1px solid rgba(11, 47, 92, 0.1);
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.computed-results strong {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.computed-results ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.computed-results li {
+  padding: 2px 0;
+}
+
+.computed-results li span.label {
+  color: var(--muted);
+}
+
+.computed-results li span.value {
+  font-weight: 500;
+}
+
+/* LEGAL CITATIONS */
+.legal-citations {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(17, 20, 24, 0.08);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* PROCESSING TIME */
+.processing-time {
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+/* LAW REFERENCE ON MISSING FIELDS */
+.law-ref {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+/* ERROR FOOTNOTE */
+.error-footnote {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(218, 41, 28, 0.05);
+  border-left: 2px solid var(--swiss-red);
+  font-size: 12px;
+  color: var(--swiss-red-deep);
+  line-height: 1.4;
+}
+
 /* Mobile */
 @media (max-width: 600px) {
   .hero-inner { padding: 36px 24px; }
