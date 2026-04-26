@@ -568,8 +568,15 @@ function App() {
             { type: "missing_fields", fields: essentialMissing },
           ]);
         } else {
-          setPendingFields([]);
-          setMessages((prev) => [...prev, { type: "answer", data }]);
+          const backendMissing = detectMissingFields(data);
+          if (backendMissing.length > 0) {
+            setMessages((prev) => [
+              ...prev,
+              { type: "missing_fields", fields: backendMissing },
+            ]);
+          } else {
+            setMessages((prev) => [...prev, { type: "answer", data }]);
+          }
         }
       } else {
         const missingFields = detectMissingFields(data);

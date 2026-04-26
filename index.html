@@ -747,8 +747,12 @@
           pendingFields = essentialMissing.slice();
           addBotMessage(buildMissingFieldsMessage(essentialMissing, currentLang));
         } else {
-          pendingFields = [];
-          addLegalAnswer(data);
+          const backendMissing = detectMissingFields(data);
+          if (backendMissing.length > 0) {
+            addBotMessage(buildMissingFieldsMessage(backendMissing, currentLang));
+          } else {
+            addLegalAnswer(data);
+          }
         }
       } else {
         const missingFields = detectMissingFields(data);
