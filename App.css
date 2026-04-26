@@ -669,6 +669,90 @@ body::before {
   margin-left: 4px;
 }
 
+/* MISSING FIELDS FORM */
+.missing-fields-form {
+  margin: 10px 0 4px;
+}
+
+.missing-fields-form p {
+  margin: 0;
+}
+
+.missing-fields-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.missing-fields-table td {
+  padding: 6px 0;
+  vertical-align: middle;
+}
+
+.missing-fields-table td:first-child {
+  width: 45%;
+  font-size: 13px;
+  color: var(--ink);
+  padding-right: 12px;
+}
+
+.missing-fields-table td:last-child {
+  width: 55%;
+}
+
+.missing-fields-table .law-ref {
+  display: block;
+  margin-left: 0;
+  margin-top: 2px;
+}
+
+.field-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(17, 20, 24, 0.2);
+  background: white;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field-input:focus {
+  border-color: var(--swiss-red);
+}
+
+select.field-input {
+  cursor: pointer;
+}
+
+.missing-fields-submit {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.missing-fields-submit button {
+  background: var(--federal-blue);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  font-family: inherit;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.missing-fields-submit button:hover {
+  background: var(--swiss-red);
+}
+
+.missing-fields-submit button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ERROR FOOTNOTE */
 .error-footnote {
   margin-top: 10px;

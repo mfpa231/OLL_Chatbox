@@ -191,6 +191,20 @@
   /* LAW REFERENCE ON MISSING FIELDS */
   .law-ref { font-size: 12px; color: var(--muted); margin-left: 4px; }
 
+  /* MISSING FIELDS FORM */
+  .missing-fields-form { margin: 10px 0 4px; }
+  .missing-fields-table { width: 100%; border-collapse: collapse; }
+  .missing-fields-table td { padding: 6px 0; vertical-align: middle; }
+  .missing-fields-table td:first-child { width: 45%; font-size: 13px; color: var(--ink); padding-right: 12px; }
+  .missing-fields-table td:last-child { width: 55%; }
+  .missing-fields-table .law-ref { display: block; margin-left: 0; margin-top: 2px; }
+  .field-input { width: 100%; padding: 8px 10px; border: 1px solid rgba(17,20,24,0.2); background: white; font-family: inherit; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.2s; }
+  .field-input:focus { border-color: var(--swiss-red); }
+  select.field-input { cursor: pointer; }
+  .missing-fields-submit { margin-top: 12px; display: flex; justify-content: flex-end; }
+  .missing-fields-submit button { background: var(--federal-blue); color: white; border: none; padding: 10px 24px; font-family: inherit; font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: background 0.2s; }
+  .missing-fields-submit button:hover { background: var(--swiss-red); }
+
   /* ERROR FOOTNOTE */
   .error-footnote {
     margin-top: 10px;
@@ -468,6 +482,24 @@
     execution: { en: 'Computation results', fr: 'Résultats de calcul', de: 'Berechnungsergebnisse', it: 'Risultati del calcolo' }
   };
 
+  // ============================================================
+  // FIELD META — input type hints for missing-field form controls
+  // ============================================================
+  const fieldMeta = {
+    income:              { type: 'number', min: 0, max: 1000000, step: 1000 },
+    salary:              { type: 'number', min: 0, max: 1000000, step: 1000 },
+    age:                 { type: 'number', min: 0, max: 120, step: 1 },
+    num_children:        { type: 'number', min: 0, max: 20, step: 1 },
+    years_in_switzerland:{ type: 'number', min: 0, max: 100, step: 1 },
+    weekly_hours:        { type: 'number', min: 0, max: 168, step: 0.5 },
+    church_member:       { type: 'boolean' },
+    self_employed:       { type: 'boolean' },
+    canton:              { type: 'canton' },
+    work_canton:         { type: 'canton' },
+  };
+
+  const CANTONS = ['AG','AI','AR','BE','BL','BS','FR','GE','GL','GR','JU','LU','NE','NW','OW','SG','SH','SO','SZ','TG','TI','UR','VD','VS','ZG','ZH'];
+
   function getFieldLabel(fieldKey, lang) {
     const entry = fieldLabels[fieldKey];
     if (entry && entry[lang]) return entry[lang];
@@ -475,22 +507,99 @@
     return humanizeVariable(fieldKey);
   }
 
+  function buildFieldInput(field) {
+    const id = typeof field === 'object' ? field.id : field;
+    const backendType = (typeof field === 'object' ? field.type : 'str') || 'str';
+    const allowed = typeof field === 'object' ? field.allowed_values : null;
+    const meta = fieldMeta[id];
+
+    // Boolean fields
+    if (backendType === 'bool' || (meta && meta.type === 'boolean')) {
+      const t = i18n[currentLang] || i18n.en;
+      return `<select class="field-input" data-field-id="${escapeHtml(id)}" data-field-type="bool">
+        <option value="">—</option>
+        <option value="true">${escapeHtml(t.yes)}</option>
+        <option value="false">${escapeHtml(t.no)}</option>
+      </select>`;
+    }
+
+    // Canton fields (from meta or backend allowed_values containing canton codes)
+    if (meta && meta.type === 'canton') {
+      const opts = CANTONS.map(c => `<option value="${c}">${c}</option>`).join('');
+      return `<select class="field-input" data-field-id="${escapeHtml(id)}" data-field-type="str">
+        <option value="">—</option>${opts}
+      </select>`;
+    }
+
+    // Enum / allowed values from backend
+    if (allowed && allowed.length > 0) {
+      const opts = allowed.map(v => `<option value="${escapeHtml(String(v))}">${escapeHtml(String(v))}</option>`).join('');
+      return `<select class="field-input" data-field-id="${escapeHtml(id)}" data-field-type="${escapeHtml(backendType)}">
+        <option value="">—</option>${opts}
+      </select>`;
+    }
+
+    // Number fields
+    if (backendType === 'int' || backendType === 'float' || (meta && meta.type === 'number')) {
+      const step = meta ? meta.step : (backendType === 'int' ? 1 : 'any');
+      const min = meta && meta.min != null ? ` min="${meta.min}"` : '';
+      const max = meta && meta.max != null ? ` max="${meta.max}"` : '';
+      const dtype = backendType === 'float' ? 'float' : (backendType === 'int' ? 'int' : 'number');
+      return `<input class="field-input" type="number" step="${step}"${min}${max} data-field-id="${escapeHtml(id)}" data-field-type="${dtype}" />`;
+    }
+
+    // Default: text input
+    return `<input class="field-input" type="text" data-field-id="${escapeHtml(id)}" data-field-type="str" />`;
+  }
+
   function buildMissingFieldsHtml(missingFields, lang) {
     const t = i18n[lang] || i18n.en;
     let html = `<p>${escapeHtml(t.missingFieldsIntro)}</p>`;
-    html += '<ul style="margin:8px 0;padding-left:20px">';
+    html += '<form class="missing-fields-form" onsubmit="handleMissingFieldsSubmit(event)">';
+    html += '<table class="missing-fields-table">';
     missingFields.forEach(field => {
       const label = typeof field === 'object'
         ? (field.description || getFieldLabel(field.id, lang))
         : getFieldLabel(field, lang);
       const lawRef = typeof field === 'object' ? field.law_reference : null;
-      html += `<li>${escapeHtml(label)}`;
-      if (lawRef) html += ` <span class="law-ref">(${escapeHtml(lawRef)})</span>`;
-      html += '</li>';
+      html += '<tr><td>' + escapeHtml(label);
+      if (lawRef) html += `<span class="law-ref">(${escapeHtml(lawRef)})</span>`;
+      html += '</td><td>' + buildFieldInput(field) + '</td></tr>';
     });
-    html += '</ul>';
-    html += `<p>${escapeHtml(t.missingFieldsOutro)}</p>`;
+    html += '</table>';
+    html += '<div class="missing-fields-submit"><button type="submit">Submit</button></div>';
+    html += '</form>';
     return html;
+  }
+
+  function handleMissingFieldsSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const inputs = form.querySelectorAll('.field-input');
+    let anyFilled = false;
+    inputs.forEach(el => {
+      const val = el.value.trim();
+      if (!val) return;
+      const id = el.dataset.fieldId;
+      const type = el.dataset.fieldType;
+      anyFilled = true;
+      if (type === 'bool') {
+        knownParameters[id] = val === 'true';
+      } else if (type === 'int') {
+        knownParameters[id] = parseInt(val, 10);
+      } else if (type === 'float') {
+        knownParameters[id] = parseFloat(val);
+      } else {
+        knownParameters[id] = val;
+      }
+    });
+    if (!anyFilled) return;
+    // Re-call backend with updated knownParameters
+    const summary = Object.entries(knownParameters)
+      .filter(([k]) => Array.from(inputs).some(el => el.dataset.fieldId === k && el.value.trim()))
+      .map(([k, v]) => `${humanizeVariable(k)}: ${v}`)
+      .join(', ');
+    processQuery(summary);
   }
 
   function addBotMessage(text) {

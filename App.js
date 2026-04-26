@@ -228,28 +228,116 @@ function getFieldLabel(fieldKey, lang) {
 }
 
 // ============================================================
-// MISSING FIELDS MESSAGE COMPONENT
+// FIELD INPUT COMPONENT
 // ============================================================
-function MissingFieldsMessage({ fields, lang }) {
+function FieldInput({ field, value, onChange }) {
+  const id = typeof field === "object" ? field.id : field;
+  const type = (typeof field === "object" ? field.type : "str") || "str";
+  const allowed = typeof field === "object" ? field.allowed_values : null;
+
+  if (type === "bool") {
+    return (
+      <select className="field-input" value={value} onChange={(e) => onChange(id, e.target.value)}>
+        <option value="">—</option>
+        <option value="true">{i18n.en.yes}</option>
+        <option value="false">{i18n.en.no}</option>
+      </select>
+    );
+  }
+  if (allowed && allowed.length > 0) {
+    return (
+      <select className="field-input" value={value} onChange={(e) => onChange(id, e.target.value)}>
+        <option value="">—</option>
+        {allowed.map((v) => (
+          <option key={v} value={String(v)}>{String(v)}</option>
+        ))}
+      </select>
+    );
+  }
+  if (type === "int" || type === "float") {
+    return (
+      <input
+        className="field-input"
+        type="number"
+        step={type === "int" ? "1" : "any"}
+        value={value}
+        onChange={(e) => onChange(id, e.target.value)}
+      />
+    );
+  }
+  return (
+    <input
+      className="field-input"
+      type="text"
+      value={value}
+      onChange={(e) => onChange(id, e.target.value)}
+    />
+  );
+}
+
+// ============================================================
+// MISSING FIELDS FORM COMPONENT
+// ============================================================
+function MissingFieldsForm({ fields, lang, onSubmit, disabled }) {
   const t = i18n[lang] || i18n.en;
+  const [values, setValues] = useState(() => {
+    const init = {};
+    fields.forEach((f) => { init[typeof f === "object" ? f.id : f] = ""; });
+    return init;
+  });
+
+  const handleChange = (id, val) => {
+    setValues((prev) => ({ ...prev, [id]: val }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const parsed = {};
+    let anyFilled = false;
+    fields.forEach((field) => {
+      const id = typeof field === "object" ? field.id : field;
+      const type = (typeof field === "object" ? field.type : "str") || "str";
+      const raw = values[id]?.trim();
+      if (!raw) return;
+      anyFilled = true;
+      if (type === "bool") parsed[id] = raw === "true";
+      else if (type === "int") parsed[id] = parseInt(raw, 10);
+      else if (type === "float") parsed[id] = parseFloat(raw);
+      else parsed[id] = raw;
+    });
+    if (anyFilled) onSubmit(parsed);
+  };
+
   return (
     <div className="msg bot">
       <p>{t.missingFieldsIntro}</p>
-      <ul style={{ margin: "8px 0", paddingLeft: "20px" }}>
-        {fields.map((field, i) => {
-          const label = typeof field === 'object'
-            ? (field.description || getFieldLabel(field.id, lang))
-            : getFieldLabel(field, lang);
-          const lawRef = typeof field === 'object' ? field.law_reference : null;
-          return (
-            <li key={i}>
-              {label}
-              {lawRef && <span className="law-ref">({lawRef})</span>}
-            </li>
-          );
-        })}
-      </ul>
-      <p>{t.missingFieldsOutro}</p>
+      <form className="missing-fields-form" onSubmit={handleSubmit}>
+        <table className="missing-fields-table">
+          <tbody>
+            {fields.map((field, i) => {
+              const id = typeof field === "object" ? field.id : field;
+              const label = typeof field === "object"
+                ? (field.description || getFieldLabel(field.id, lang))
+                : getFieldLabel(field, lang);
+              const lawRef = typeof field === "object" ? field.law_reference : null;
+              return (
+                <tr key={i}>
+                  <td>
+                    {label}
+                    {lawRef && <span className="law-ref">({lawRef})</span>}
+                  </td>
+                  <td>
+                    <FieldInput field={field} value={values[id]} onChange={handleChange} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <div className="missing-fields-submit">
+          <button type="submit" disabled={disabled}>Submit</button>
+        </div>
+      </form>
     </div>
   );
 }
@@ -651,7 +739,21 @@ function App() {
                   return <LegalAnswer key={i} data={msg.data} lang={lang} />;
                 }
                 if (msg.type === "missing_fields") {
-                  return <MissingFieldsMessage key={i} fields={msg.fields} lang={lang} />;
+                  return (
+                    <MissingFieldsForm
+                      key={i}
+                      fields={msg.fields}
+                      lang={lang}
+                      disabled={isLoading}
+                      onSubmit={(parsed) => {
+                        setKnownParameters((prev) => ({ ...prev, ...parsed }));
+                        const summary = Object.entries(parsed)
+                          .map(([k, v]) => `${humanizeVariable(k)}: ${v}`)
+                          .join(", ");
+                        processQuery(summary);
+                      }}
+                    />
+                  );
                 }
                 if (msg.type === "bot_error") {
                   return <div key={i} className="msg bot"><p>{msg.text}</p></div>;
