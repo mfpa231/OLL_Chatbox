@@ -664,9 +664,87 @@ body::before {
 
 /* LAW REFERENCE ON MISSING FIELDS */
 .law-ref {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
-  margin-left: 4px;
+  margin-left: 2px;
+}
+
+/* MISSING FIELDS FORM */
+.missing-fields-form {
+  margin: 12px 0 4px;
+}
+
+.missing-fields-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-label {
+  font-size: 12.5px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.field-input {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid rgba(17, 20, 24, 0.2);
+  border-radius: 4px;
+  background: white;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field-input:focus {
+  border-color: var(--swiss-red);
+}
+
+select.field-input {
+  cursor: pointer;
+}
+
+.field-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.missing-fields-submit {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.missing-fields-submit button {
+  background: var(--federal-blue);
+  color: white;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.missing-fields-submit button:hover {
+  background: var(--swiss-red);
+}
+
+.missing-fields-submit button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* MISSING FIELDS FORM */

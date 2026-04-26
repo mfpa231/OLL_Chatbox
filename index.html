@@ -66,7 +66,7 @@
   .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--swiss-red) 0%, var(--swiss-red) 50%, var(--federal-blue) 50%, var(--federal-blue) 100%); }
   .hero-inner { padding: 56px 56px 48px; }
   .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.22em; color: var(--federal-blue); font-weight: 500; margin-bottom: 24px; padding: 6px 12px; border: 1px solid rgba(11, 47, 92, 0.2); background: rgba(11, 47, 92, 0.04); }
-  .hero-eyebrow::before { content: '§'; font-family: 'Fraunces', serif; font-size: 14px; color: var(--swiss-red); }
+  .hero-eyebrow::before { content: '\00A7'; font-family: 'Fraunces', serif; font-size: 14px; color: var(--swiss-red); }
   .hero h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(36px, 5vw, 52px); line-height: 1.05; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 20px; }
   .hero h1 em { font-style: italic; color: var(--swiss-red); font-weight: 400; }
   .hero p { font-size: 16px; line-height: 1.6; color: var(--muted); max-width: 540px; margin-bottom: 36px; }
@@ -115,16 +115,10 @@
   .msg { max-width: 78%; padding: 14px 18px; font-size: 14.5px; line-height: 1.55; animation: msgIn 0.3s ease; }
   @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   .msg.user { align-self: flex-end; background: var(--federal-blue); color: white; border-radius: 14px 14px 2px 14px; }
-
   .msg.bot {
-    align-self: flex-start;
-    background: var(--paper-warm);
-    color: var(--ink);
-    border-radius: 14px 14px 14px 2px;
-    padding: 14px 18px;
-    max-width: 85%;
-    font-size: 14.5px;
-    line-height: 1.65;
+    align-self: flex-start; background: var(--paper-warm); color: var(--ink);
+    border-radius: 14px 14px 14px 2px; padding: 14px 18px; max-width: 85%;
+    font-size: 14.5px; line-height: 1.65;
   }
   .msg.bot p { margin: 0; }
   .msg.bot p + p { margin-top: 10px; }
@@ -132,11 +126,8 @@
   .exec-error {
     font-family: ui-monospace, 'SF Mono', Menlo, monospace;
     font-size: 11px; line-height: 1.5;
-    background: rgba(218, 41, 28, 0.05);
-    border: 1px solid rgba(218, 41, 28, 0.2);
-    padding: 10px 12px;
-    color: var(--swiss-red-deep);
-    word-break: break-word;
+    background: rgba(218, 41, 28, 0.05); border: 1px solid rgba(218, 41, 28, 0.2);
+    padding: 10px 12px; color: var(--swiss-red-deep); word-break: break-word;
   }
 
   .typing { align-self: flex-start; display: flex; gap: 4px; padding: 14px 18px; background: var(--paper-warm); border-radius: 14px 14px 14px 2px; border-left: 3px solid var(--swiss-red); }
@@ -152,78 +143,49 @@
   .chat-input-row button { background: var(--ink); color: white; border: none; padding: 0 24px; font-family: inherit; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: background 0.2s; }
   .chat-input-row button:hover { background: var(--swiss-red); }
 
-  /* COMPUTED RESULTS BLOCK */
-  .computed-results {
-    margin-top: 12px;
-    padding: 10px 14px;
-    background: rgba(11, 47, 92, 0.04);
-    border: 1px solid rgba(11, 47, 92, 0.1);
-    border-radius: 6px;
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .computed-results strong {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    display: block;
-    margin-bottom: 6px;
-  }
+  /* COMPUTED RESULTS */
+  .computed-results { margin-top: 12px; padding: 10px 14px; background: rgba(11, 47, 92, 0.04); border: 1px solid rgba(11, 47, 92, 0.1); border-radius: 6px; font-size: 13px; line-height: 1.5; }
+  .computed-results strong { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); display: block; margin-bottom: 6px; }
   .computed-results ul { list-style: none; padding: 0; margin: 0; }
   .computed-results li { padding: 2px 0; }
   .computed-results li span.label { color: var(--muted); }
   .computed-results li span.value { font-weight: 500; }
 
   /* LEGAL CITATIONS */
-  .legal-citations {
-    margin-top: 12px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(17, 20, 24, 0.08);
-    font-size: 11px;
-    color: var(--muted);
-    line-height: 1.4;
-  }
-
-  /* PROCESSING TIME */
+  .legal-citations { margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(17, 20, 24, 0.08); font-size: 11px; color: var(--muted); line-height: 1.4; }
   .processing-time { margin-top: 6px; font-size: 10px; color: var(--muted); opacity: 0.7; }
-
-  /* LAW REFERENCE ON MISSING FIELDS */
-  .law-ref { font-size: 12px; color: var(--muted); margin-left: 4px; }
+  .law-ref { font-size: 11px; color: var(--muted); margin-left: 2px; }
 
   /* MISSING FIELDS FORM */
-  .missing-fields-form { margin: 10px 0 4px; }
-  .missing-fields-table { width: 100%; border-collapse: collapse; }
-  .missing-fields-table td { padding: 6px 0; vertical-align: middle; }
-  .missing-fields-table td:first-child { width: 45%; font-size: 13px; color: var(--ink); padding-right: 12px; }
-  .missing-fields-table td:last-child { width: 55%; }
-  .missing-fields-table .law-ref { display: block; margin-left: 0; margin-top: 2px; }
-  .field-input { width: 100%; padding: 8px 10px; border: 1px solid rgba(17,20,24,0.2); background: white; font-family: inherit; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.2s; }
+  .missing-fields-form { margin: 12px 0 4px; }
+  .missing-fields-grid { display: flex; flex-direction: column; gap: 12px; }
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+  .field-label { font-size: 12.5px; color: var(--ink); font-weight: 500; }
+  .field-input {
+    width: 100%; padding: 9px 11px; border: 1px solid rgba(17,20,24,0.2); border-radius: 4px;
+    background: white; font-family: inherit; font-size: 13px; color: var(--ink);
+    outline: none; transition: border-color 0.2s;
+  }
   .field-input:focus { border-color: var(--swiss-red); }
   select.field-input { cursor: pointer; }
-  .field-input:disabled { background: var(--paper-warm); color: var(--muted); cursor: not-allowed; }
-  .missing-fields-submit { margin-top: 12px; display: flex; justify-content: flex-end; }
-  .missing-fields-submit button { background: var(--federal-blue); color: white; border: none; padding: 10px 24px; font-family: inherit; font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: background 0.2s; }
-  .missing-fields-submit button:hover:not(:disabled) { background: var(--swiss-red); }
+  .field-input:disabled { opacity: 0.5; cursor: not-allowed; }
+  .missing-fields-submit { margin-top: 14px; display: flex; justify-content: flex-end; }
+  .missing-fields-submit button {
+    background: var(--federal-blue); color: white; border: none; padding: 10px 28px; border-radius: 4px;
+    font-family: inherit; font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .missing-fields-submit button:hover { background: var(--swiss-red); }
   .missing-fields-submit button:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* ERROR FOOTNOTE */
-  .error-footnote {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: rgba(218, 41, 28, 0.05);
-    border-left: 2px solid var(--swiss-red);
-    font-size: 12px;
-    color: var(--swiss-red-deep);
-    line-height: 1.4;
-  }
+  .error-footnote { margin-top: 10px; padding: 8px 12px; background: rgba(218, 41, 28, 0.05); border-left: 2px solid var(--swiss-red); font-size: 12px; color: var(--swiss-red-deep); line-height: 1.4; }
 
   @media (max-width: 600px) {
     .hero-inner { padding: 36px 24px; }
     header { padding: 16px 20px; }
     main { padding: 20px; }
     .hero-footer { flex-direction: column; gap: 10px; align-items: flex-start; }
-    .missing-fields-table td { display: block; width: 100%; }
     .brand-divider, .partner-logo { display: none; }
   }
 </style>
@@ -251,31 +213,31 @@
     <div class="hero-inner">
       <div class="hero-eyebrow">Swiss Federal legal text described simply</div>
       <h1>Navigate Swiss law<br/>with <em>clarity</em>.</h1>
-      <p>Describe your situation in plain language — get grounded answers with references to Fedlex sources with our assistant.</p>
+      <p>Describe your situation in plain language &mdash; get grounded answers with references to Fedlex sources with our assistant.</p>
 
       <div class="suggestions">
         <div class="suggestion-label">Try asking about</div>
         <button class="chip" onclick="useSuggestion(this)">
           <span>Anna works in Zurich earning 85000 CHF/year as an employee</span>
-          <span class="arrow">→</span>
+          <span class="arrow">&rarr;</span>
         </button>
         <button class="chip" onclick="useSuggestion(this)">
           <span>My neighbor's tree fell on my car during a storm, who is liable for the damage?</span>
-          <span class="arrow">→</span>
+          <span class="arrow">&rarr;</span>
         </button>
         <button class="chip" onclick="useSuggestion(this)">
           <span>I'm a 20-year-old student living in Bern, can I get a scholarship for my university studies?</span>
-          <span class="arrow">→</span>
+          <span class="arrow">&rarr;</span>
         </button>
       </div>
 
       <div class="input-row">
-        <input id="heroInput" placeholder="Describe your situation…" onkeydown="if(event.key==='Enter') startChat()" />
-        <button onclick="startChat()">Ask <span class="arrow">→</span></button>
+        <input id="heroInput" placeholder="Describe your situation&hellip;" onkeydown="if(event.key==='Enter') startChat()" />
+        <button onclick="startChat()">Ask <span class="arrow">&rarr;</span></button>
       </div>
 
       <div class="hero-footer">
-        <div>Sources · Fedlex.admin.ch</div>
+        <div>Sources &middot; Fedlex.admin.ch</div>
         <div class="languages">
           <span data-lang="en" onclick="setLang('en')">EN</span>
           <span data-lang="fr" class="active" onclick="setLang('fr')">FR</span>
@@ -302,7 +264,7 @@
     <div class="chat-box" id="chatBox"></div>
     <div class="chat-input-area">
       <div class="chat-input-row">
-        <input id="chatInput" placeholder="Continue the conversation…" onkeydown="if(event.key==='Enter') sendMessage()" />
+        <input id="chatInput" placeholder="Continue the conversation&hellip;" onkeydown="if(event.key==='Enter') sendMessage()" />
         <button onclick="sendMessage()">Send</button>
       </div>
     </div>
@@ -310,375 +272,307 @@
 </main>
 
 <script>
-  let currentLang = 'fr';
-  let pendingFields = [];
-  let initialDescription = '';
-  let knownParameters = {};
+  var currentLang = 'fr';
+  var pendingFields = [];
+  var initialDescription = '';
+  var knownParameters = {};
 
   function setLang(lang) {
     currentLang = lang;
-    document.querySelectorAll('[data-lang]').forEach(el => {
+    document.querySelectorAll('[data-lang]').forEach(function(el) {
       el.classList.toggle('active', el.dataset.lang === lang);
     });
   }
 
-  // ============================================================
-  // BACKEND API
-  // ============================================================
-  const API_URL = "http://vps-13d3e726.vps.ovh.net:8040/api/v1/classify";
+  var API_URL = "http://vps-13d3e726.vps.ovh.net:8040/api/v1/classify";
 
   async function callBackend(payload) {
-    const res = await fetch(API_URL, {
+    var res = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
-    if (!res.ok) {
-      throw new Error(`Server responded with ${res.status}: ${res.statusText}`);
-    }
-
+    if (!res.ok) throw new Error('Server responded with ' + res.status + ': ' + res.statusText);
     return await res.json();
   }
 
-  const i18n = {
+  var i18n = {
     en: {
-      concretely: "In concrete terms,",
-      chf: "CHF", perMonth: "per month",
+      concretely: "In concrete terms,", chf: "CHF", perMonth: "per month",
       alsoConsidered: "I also considered some other rules that don't apply here:",
       execFailNote: "I wasn't able to compute the exact figures due to a technical issue, but the legal reasoning above still holds.",
       noLaws: "I couldn't identify any applicable Swiss federal law articles for this situation. Could you give me more details?",
       missingFieldsIntro: "To provide a complete legal analysis, I still need the following information:",
       missingFieldsOutro: "Please provide these details so I can give you a precise answer.",
-      computedResults: "Computed results:",
-      yes: "Yes",
-      no: "No",
-      legalBasis: "Legal basis",
-      processedIn: "Processed in",
-      submit: "Submit"
+      computedResults: "Computed results:", yes: "Yes", no: "No",
+      legalBasis: "Legal basis", processedIn: "Processed in"
     },
     fr: {
-      concretely: "Concrètement,",
-      chf: "CHF", perMonth: "par mois",
-      alsoConsidered: "J'ai aussi examiné d'autres règles qui ne s'appliquent pas ici :",
-      execFailNote: "Je n'ai pas pu calculer le montant exact en raison d'un problème technique, mais le raisonnement juridique ci-dessus reste valide.",
-      noLaws: "Je n'ai pas pu identifier d'articles de droit fédéral applicables à cette situation. Pourriez-vous me donner plus de détails ?",
-      missingFieldsIntro: "Pour fournir une analyse juridique complète, j'ai encore besoin des informations suivantes :",
-      missingFieldsOutro: "Veuillez fournir ces détails afin que je puisse vous donner une réponse précise.",
-      computedResults: "Résultats calculés :",
-      yes: "Oui",
-      no: "Non",
-      legalBasis: "Base légale",
-      processedIn: "Traité en",
-      submit: "Soumettre"
+      concretely: "Concr\u00e8tement,", chf: "CHF", perMonth: "par mois",
+      alsoConsidered: "J'ai aussi examin\u00e9 d'autres r\u00e8gles qui ne s'appliquent pas ici :",
+      execFailNote: "Je n'ai pas pu calculer le montant exact en raison d'un probl\u00e8me technique, mais le raisonnement juridique ci-dessus reste valide.",
+      noLaws: "Je n'ai pas pu identifier d'articles de droit f\u00e9d\u00e9ral applicables \u00e0 cette situation. Pourriez-vous me donner plus de d\u00e9tails ?",
+      missingFieldsIntro: "Pour fournir une analyse juridique compl\u00e8te, j'ai encore besoin des informations suivantes :",
+      missingFieldsOutro: "Veuillez fournir ces d\u00e9tails afin que je puisse vous donner une r\u00e9ponse pr\u00e9cise.",
+      computedResults: "R\u00e9sultats calcul\u00e9s :", yes: "Oui", no: "Non",
+      legalBasis: "Base l\u00e9gale", processedIn: "Trait\u00e9 en"
     },
     de: {
-      concretely: "Konkret,",
-      chf: "CHF", perMonth: "pro Monat",
-      alsoConsidered: "Ich habe auch andere Regeln geprüft, die hier nicht gelten:",
-      execFailNote: "Ich konnte den genauen Betrag aufgrund eines technischen Problems nicht berechnen, aber die rechtliche Argumentation bleibt gültig.",
-      noLaws: "Für diese Situation konnten keine anwendbaren Artikel des Bundesrechts identifiziert werden. Könnten Sie mir weitere Details geben?",
-      missingFieldsIntro: "Um eine vollständige rechtliche Analyse zu erstellen, benötige ich noch folgende Informationen:",
+      concretely: "Konkret,", chf: "CHF", perMonth: "pro Monat",
+      alsoConsidered: "Ich habe auch andere Regeln gepr\u00fcft, die hier nicht gelten:",
+      execFailNote: "Ich konnte den genauen Betrag aufgrund eines technischen Problems nicht berechnen, aber die rechtliche Argumentation bleibt g\u00fcltig.",
+      noLaws: "F\u00fcr diese Situation konnten keine anwendbaren Artikel des Bundesrechts identifiziert werden. K\u00f6nnten Sie mir weitere Details geben?",
+      missingFieldsIntro: "Um eine vollst\u00e4ndige rechtliche Analyse zu erstellen, ben\u00f6tige ich noch folgende Informationen:",
       missingFieldsOutro: "Bitte geben Sie diese Details an, damit ich Ihnen eine genaue Antwort geben kann.",
-      computedResults: "Berechnete Ergebnisse:",
-      yes: "Ja",
-      no: "Nein",
-      legalBasis: "Rechtsgrundlage",
-      processedIn: "Verarbeitet in",
-      submit: "Absenden"
+      computedResults: "Berechnete Ergebnisse:", yes: "Ja", no: "Nein",
+      legalBasis: "Rechtsgrundlage", processedIn: "Verarbeitet in"
     },
     it: {
-      concretely: "Concretamente,",
-      chf: "CHF", perMonth: "al mese",
+      concretely: "Concretamente,", chf: "CHF", perMonth: "al mese",
       alsoConsidered: "Ho anche considerato altre regole che non si applicano in questo caso:",
       execFailNote: "Non sono riuscito a calcolare l'importo esatto a causa di un problema tecnico, ma il ragionamento giuridico sopra resta valido.",
       noLaws: "Non sono riuscito a identificare articoli di diritto federale applicabili a questa situazione. Potrebbe fornirmi maggiori dettagli?",
       missingFieldsIntro: "Per fornire un'analisi giuridica completa, ho ancora bisogno delle seguenti informazioni:",
-      missingFieldsOutro: "Vi prego di fornire questi dettagli affinché possa darvi una risposta precisa.",
-      computedResults: "Risultati calcolati:",
-      yes: "Sì",
-      no: "No",
-      legalBasis: "Base giuridica",
-      processedIn: "Elaborato in",
-      submit: "Invia"
+      missingFieldsOutro: "Vi prego di fornire questi dettagli affinch\u00e9 possa darvi una risposta precisa.",
+      computedResults: "Risultati calcolati:", yes: "S\u00ec", no: "No",
+      legalBasis: "Base giuridica", processedIn: "Elaborato in"
     }
   };
 
-  // Parser handles BOTH formats: English bullet list and French "Major Premise:" + "---"
   function parseSyllogism(text) {
     if (!text) return [];
-
     if (text.includes('---')) {
-      return text.split(/\n*---\n*/).map(b => b.trim()).filter(Boolean).map(block => {
-        const premises = [];
-        const lines = block.split(/\n+/);
-        let currentType = null;
-        let buffer = [];
-        const flush = () => {
-          if (currentType && buffer.length) premises.push({ type: currentType, text: buffer.join(' ').trim() });
-          buffer = [];
-        };
-        lines.forEach(line => {
-          const m = line.match(/^\s*(Major\s*Premise|Minor\s*Premise|Conclusion)\s*:\s*(.*)/i);
-          if (m) {
-            flush();
-            currentType = m[1].toLowerCase().includes('major') ? 'major'
-                        : m[1].toLowerCase().includes('minor') ? 'minor' : 'conclusion';
-            if (m[2]) buffer.push(m[2]);
-          } else if (currentType) buffer.push(line);
+      return text.split(/\n*---\n*/).map(function(b){return b.trim();}).filter(Boolean).map(function(block) {
+        var premises = [], lines = block.split(/\n+/), currentType = null, buffer = [];
+        function flush() { if (currentType && buffer.length) premises.push({ type: currentType, text: buffer.join(' ').trim() }); buffer = []; }
+        lines.forEach(function(line) {
+          var m = line.match(/^\s*(Major\s*Premise|Minor\s*Premise|Conclusion)\s*:\s*(.*)/i);
+          if (m) { flush(); currentType = m[1].toLowerCase().includes('major') ? 'major' : m[1].toLowerCase().includes('minor') ? 'minor' : 'conclusion'; if (m[2]) buffer.push(m[2]); }
+          else if (currentType) buffer.push(line);
         });
         flush();
-        const major = premises.find(p => p.type === 'major');
-        const articleMatch = major ? major.text.match(/art\.\s*(\d+[a-z]?)\s*([A-Z]{2,5})/i) : null;
-        const article = articleMatch ? `${articleMatch[2].toUpperCase()} Art. ${articleMatch[1]}` : '';
-        return { article, premises };
+        var major = premises.find(function(p){return p.type==='major';});
+        var articleMatch = major ? major.text.match(/art\.\s*(\d+[a-z]?)\s*([A-Z]{2,5})/i) : null;
+        var article = articleMatch ? articleMatch[2].toUpperCase()+' Art. '+articleMatch[1] : '';
+        return { article: article, premises: premises };
       });
     }
-
-    return text.split(/\n\n+/).map(b => b.trim()).filter(Boolean).map(block => {
-      const headerMatch = block.match(/\*\*([^*]+)\*\*/);
-      const article = headerMatch ? headerMatch[1].trim() : '';
-      const premises = block.split('\n').slice(1).map(line => {
-        const m = line.match(/-\s*(Major premise|Minor premise|Conclusion)\s*:\s*(.+)/i);
+    return text.split(/\n\n+/).map(function(b){return b.trim();}).filter(Boolean).map(function(block) {
+      var headerMatch = block.match(/\*\*([^*]+)\*\*/);
+      var article = headerMatch ? headerMatch[1].trim() : '';
+      var premises = block.split('\n').slice(1).map(function(line) {
+        var m = line.match(/-\s*(Major premise|Minor premise|Conclusion)\s*:\s*(.+)/i);
         if (!m) return null;
-        const type = m[1].toLowerCase().includes('major') ? 'major'
-                   : m[1].toLowerCase().includes('minor') ? 'minor' : 'conclusion';
-        return { type, text: m[2].trim() };
+        var type = m[1].toLowerCase().includes('major') ? 'major' : m[1].toLowerCase().includes('minor') ? 'minor' : 'conclusion';
+        return { type: type, text: m[2].trim() };
       }).filter(Boolean);
-      return { article, premises };
+      return { article: article, premises: premises };
     });
   }
 
   function humanizeVariable(v) { return v.replace(/_/g, ' ').replace(/\bahv\b/gi, 'AHV'); }
+  function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function formatValue(v) {
-    if (typeof v === 'boolean') return v ? '✓ true' : '✕ false';
-    if (typeof v === 'number') {
-      return Number.isInteger(v) ? v.toLocaleString() : v.toLocaleString(undefined, { maximumFractionDigits: 2 });
-    }
-    return String(v);
-  }
-
-  function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-  // ============================================================
-  // FIELD LABELS — i18n mapping for missing field prompts
-  // ============================================================
-  const fieldLabels = {
+  var fieldLabels = {
     income: { en: 'Income', fr: 'Revenu', de: 'Einkommen', it: 'Reddito' },
-    canton: { en: 'Canton of residence', fr: 'Canton de résidence', de: 'Wohnkanton', it: 'Cantone di residenza' },
-    employment_status: { en: 'Employment status', fr: "Statut d'emploi", de: 'Beschäftigungsstatus', it: 'Stato occupazionale' },
-    age: { en: 'Age', fr: 'Âge', de: 'Alter', it: 'Età' },
-    nationality: { en: 'Nationality', fr: 'Nationalité', de: 'Staatsangehörigkeit', it: 'Nazionalità' },
-    marital_status: { en: 'Marital status', fr: 'État civil', de: 'Zivilstand', it: 'Stato civile' },
+    canton: { en: 'Canton of residence', fr: 'Canton de r\u00e9sidence', de: 'Wohnkanton', it: 'Cantone di residenza' },
+    employment_status: { en: 'Employment status', fr: "Statut d'emploi", de: 'Besch\u00e4ftigungsstatus', it: 'Stato occupazionale' },
+    age: { en: 'Age', fr: '\u00c2ge', de: 'Alter', it: 'Et\u00e0' },
+    nationality: { en: 'Nationality', fr: 'Nationalit\u00e9', de: 'Staatsangeh\u00f6rigkeit', it: 'Nazionalit\u00e0' },
+    marital_status: { en: 'Marital status', fr: '\u00c9tat civil', de: 'Zivilstand', it: 'Stato civile' },
     num_children: { en: 'Number of children', fr: "Nombre d'enfants", de: 'Anzahl Kinder', it: 'Numero di figli' },
-    residence_permit: { en: 'Residence permit type', fr: 'Type de permis de séjour', de: 'Aufenthaltsbewilligung', it: 'Tipo di permesso di soggiorno' },
-    years_in_switzerland: { en: 'Years in Switzerland', fr: 'Années en Suisse', de: 'Jahre in der Schweiz', it: 'Anni in Svizzera' },
+    residence_permit: { en: 'Residence permit type', fr: 'Type de permis de s\u00e9jour', de: 'Aufenthaltsbewilligung', it: 'Tipo di permesso di soggiorno' },
+    years_in_switzerland: { en: 'Years in Switzerland', fr: 'Ann\u00e9es en Suisse', de: 'Jahre in der Schweiz', it: 'Anni in Svizzera' },
     employer_type: { en: 'Employer type', fr: "Type d'employeur", de: 'Arbeitgebertyp', it: 'Tipo di datore di lavoro' },
-    weekly_hours: { en: 'Weekly working hours', fr: 'Heures de travail hebdomadaires', de: 'Wöchentliche Arbeitsstunden', it: 'Ore di lavoro settimanali' },
-    church_member: { en: 'Church membership', fr: "Appartenance à une église", de: 'Kirchenmitgliedschaft', it: 'Appartenenza a una chiesa' },
+    weekly_hours: { en: 'Weekly working hours', fr: 'Heures de travail hebdomadaires', de: 'W\u00f6chentliche Arbeitsstunden', it: 'Ore di lavoro settimanali' },
+    church_member: { en: 'Church membership', fr: "Appartenance \u00e0 une \u00e9glise", de: 'Kirchenmitgliedschaft', it: 'Appartenenza a una chiesa' },
     salary: { en: 'Salary', fr: 'Salaire', de: 'Gehalt', it: 'Stipendio' },
-    tax_class: { en: 'Tax class', fr: "Classe d'impôt", de: 'Steuerklasse', it: 'Classe fiscale' },
+    tax_class: { en: 'Tax class', fr: "Classe d'imp\u00f4t", de: 'Steuerklasse', it: 'Classe fiscale' },
     work_canton: { en: 'Canton of employment', fr: "Canton d'emploi", de: 'Arbeitskanton', it: 'Cantone di lavoro' },
     occupation: { en: 'Occupation', fr: 'Profession', de: 'Beruf', it: 'Professione' },
-    self_employed: { en: 'Self-employed status', fr: 'Statut indépendant', de: 'Selbstständigkeitsstatus', it: 'Stato di lavoratore autonomo' },
+    self_employed: { en: 'Self-employed status', fr: 'Statut ind\u00e9pendant', de: 'Selbstst\u00e4ndigkeitsstatus', it: 'Stato di lavoratore autonomo' },
     birth_date: { en: 'Date of birth', fr: 'Date de naissance', de: 'Geburtsdatum', it: 'Data di nascita' },
-    gender: { en: 'Gender', fr: 'Genre', de: 'Geschlecht', it: 'Geschlecht' },
-    syllogistic_reasoning: { en: 'Legal reasoning', fr: 'Raisonnement juridique', de: 'Rechtliche Begründung', it: 'Ragionamento giuridico' },
-    applicable_laws: { en: 'Applicable laws', fr: 'Lois applicables', de: 'Anwendbare Gesetze', it: 'Leggi applicabili' },
-    execution: { en: 'Computation results', fr: 'Résultats de calcul', de: 'Berechnungsergebnisse', it: 'Risultati del calcolo' }
+    gender: { en: 'Gender', fr: 'Genre', de: 'Geschlecht', it: 'Geschlecht' }
   };
 
-  // ============================================================
-  // FIELD META — input type hints for missing-field form controls
-  // ============================================================
-  const fieldMeta = {
-    income:              { type: 'number', min: 0, max: 1000000, step: 1000 },
-    salary:              { type: 'number', min: 0, max: 1000000, step: 1000 },
-    age:                 { type: 'number', min: 0, max: 120, step: 1 },
-    num_children:        { type: 'number', min: 0, max: 20, step: 1 },
-    years_in_switzerland:{ type: 'number', min: 0, max: 100, step: 1 },
-    weekly_hours:        { type: 'number', min: 0, max: 168, step: 0.5 },
-    church_member:       { type: 'boolean' },
-    self_employed:       { type: 'boolean' },
-    canton:              { type: 'canton' },
-    work_canton:         { type: 'canton' },
+  var fieldMeta = {
+    income:       { type: 'number', min: 0, max: 10000000, step: 1000 },
+    age:          { type: 'number', min: 0, max: 150, step: 1 },
+    num_children: { type: 'number', min: 0, max: 30, step: 1 },
+    years_in_switzerland: { type: 'number', min: 0, max: 150, step: 1 },
+    weekly_hours: { type: 'number', min: 0, max: 168, step: 0.5 },
+    salary:       { type: 'number', min: 0, max: 10000000, step: 100 },
+    church_member: { type: 'boolean' },
+    self_employed: { type: 'boolean' },
+    canton:       { type: 'canton' },
+    work_canton:  { type: 'canton' },
+    gender: {
+      type: 'select',
+      options: {
+        en: [['male','Male'],['female','Female'],['other','Other']],
+        fr: [['male','Masculin'],['female','F\u00e9minin'],['other','Autre']],
+        de: [['male','M\u00e4nnlich'],['female','Weiblich'],['other','Andere']],
+        it: [['male','Maschile'],['female','Femminile'],['other','Altro']]
+      }
+    },
+    marital_status: {
+      type: 'select',
+      options: {
+        en: [['single','Single'],['married','Married'],['divorced','Divorced'],['widowed','Widowed'],['separated','Separated']],
+        fr: [['single','C\u00e9libataire'],['married','Mari\u00e9(e)'],['divorced','Divorc\u00e9(e)'],['widowed','Veuf/Veuve'],['separated','S\u00e9par\u00e9(e)']],
+        de: [['single','Ledig'],['married','Verheiratet'],['divorced','Geschieden'],['widowed','Verwitwet'],['separated','Getrennt']],
+        it: [['single','Celibe/Nubile'],['married','Sposato/a'],['divorced','Divorziato/a'],['widowed','Vedovo/a'],['separated','Separato/a']]
+      }
+    },
+    employment_status: {
+      type: 'select',
+      options: {
+        en: [['employed','Employed'],['self_employed','Self-employed'],['unemployed','Unemployed'],['student','Student'],['retired','Retired']],
+        fr: [['employed','Employ\u00e9(e)'],['self_employed','Ind\u00e9pendant(e)'],['unemployed','Sans emploi'],['student','\u00c9tudiant(e)'],['retired','Retrait\u00e9(e)']],
+        de: [['employed','Angestellt'],['self_employed','Selbstst\u00e4ndig'],['unemployed','Arbeitslos'],['student','Student(in)'],['retired','Pensioniert']],
+        it: [['employed','Impiegato/a'],['self_employed','Indipendente'],['unemployed','Disoccupato/a'],['student','Studente/ssa'],['retired','Pensionato/a']]
+      }
+    },
+    residence_permit: {
+      type: 'select',
+      options: {
+        en: [['C','C \u2014 Settlement'],['B','B \u2014 Residence'],['L','L \u2014 Short-term'],['G','G \u2014 Cross-border'],['F','F \u2014 Provisional'],['N','N \u2014 Asylum seeker'],['swiss','Swiss citizen']],
+        fr: [['C','C \u2014 \u00c9tablissement'],['B','B \u2014 S\u00e9jour'],['L','L \u2014 Courte dur\u00e9e'],['G','G \u2014 Frontalier'],['F','F \u2014 Admission provisoire'],['N','N \u2014 Requ\u00e9rant d\'asile'],['swiss','Citoyen(ne) suisse']],
+        de: [['C','C \u2014 Niederlassung'],['B','B \u2014 Aufenthalt'],['L','L \u2014 Kurzaufenthalt'],['G','G \u2014 Grenzg\u00e4nger'],['F','F \u2014 Vorl\u00e4ufige Aufnahme'],['N','N \u2014 Asylsuchende'],['swiss','Schweizer B\u00fcrger(in)']],
+        it: [['C','C \u2014 Domicilio'],['B','B \u2014 Dimora'],['L','L \u2014 Breve durata'],['G','G \u2014 Frontaliere'],['F','F \u2014 Ammissione provvisoria'],['N','N \u2014 Richiedente asilo'],['swiss','Cittadino/a svizzero/a']]
+      }
+    },
+    tax_class: {
+      type: 'select',
+      options: {
+        en: [['A','A'],['B','B'],['C','C'],['D','D'],['H','H']],
+        fr: [['A','A'],['B','B'],['C','C'],['D','D'],['H','H']],
+        de: [['A','A'],['B','B'],['C','C'],['D','D'],['H','H']],
+        it: [['A','A'],['B','B'],['C','C'],['D','D'],['H','H']]
+      }
+    }
   };
 
-  const CANTONS = ['AG','AI','AR','BE','BL','BS','FR','GE','GL','GR','JU','LU','NE','NW','OW','SG','SH','SO','SZ','TG','TI','UR','VD','VS','ZG','ZH'];
+  var SWISS_CANTONS = ['AG','AI','AR','BE','BL','BS','FR','GE','GL','GR','JU','LU','NE','NW','OW','SG','SH','SO','SZ','TG','TI','UR','VD','VS','ZG','ZH'];
+
+  function getSubmitLabel(lang) {
+    return { en: 'Submit', fr: 'Envoyer', de: 'Absenden', it: 'Invia' }[lang] || 'Submit';
+  }
 
   function getFieldLabel(fieldKey, lang) {
-    const entry = fieldLabels[fieldKey];
+    var entry = fieldLabels[fieldKey];
     if (entry && entry[lang]) return entry[lang];
     if (entry && entry.en) return entry.en;
     return humanizeVariable(fieldKey);
   }
 
+  function resolveFieldMeta(field) {
+    var id = typeof field === 'object' ? field.id : field;
+    if (fieldMeta[id]) return Object.assign({ id: id }, fieldMeta[id]);
+    var backendType = typeof field === 'object' ? field.type : null;
+    var allowed = typeof field === 'object' ? field.allowed_values : null;
+    if (backendType === 'bool') return { id: id, type: 'boolean' };
+    if (allowed && allowed.length > 0) return { id: id, type: 'enum', allowed: allowed };
+    if (backendType === 'int') return { id: id, type: 'number', min: 0, step: 1 };
+    if (backendType === 'float') return { id: id, type: 'number', step: 'any' };
+    return { id: id, type: 'text' };
+  }
+
   function buildFieldInput(field) {
-    const id = typeof field === 'object' ? field.id : field;
-    const backendType = (typeof field === 'object' ? field.type : 'str') || 'str';
-    const allowed = typeof field === 'object' ? field.allowed_values : null;
-    const meta = fieldMeta[id];
+    var meta = resolveFieldMeta(field);
+    var eid = escapeHtml(meta.id);
+    var t = i18n[currentLang] || i18n.en;
 
-    // Boolean fields
-    if (backendType === 'bool' || (meta && meta.type === 'boolean')) {
-      const t = i18n[currentLang] || i18n.en;
-      return `<select class="field-input" data-field-id="${escapeHtml(id)}" data-field-type="bool">
-        <option value="">—</option>
-        <option value="true">${escapeHtml(t.yes)}</option>
-        <option value="false">${escapeHtml(t.no)}</option>
-      </select>`;
+    if (meta.type === 'boolean') {
+      return '<select class="field-input" data-field-id="'+eid+'" data-field-type="bool"><option value="">--</option><option value="true">'+escapeHtml(t.yes)+'</option><option value="false">'+escapeHtml(t.no)+'</option></select>';
     }
-
-    // Canton fields (from meta or backend allowed_values containing canton codes)
-    if (meta && meta.type === 'canton') {
-      const opts = CANTONS.map(c => `<option value="${c}">${c}</option>`).join('');
-      return `<select class="field-input" data-field-id="${escapeHtml(id)}" data-field-type="str">
-        <option value="">—</option>${opts}
-      </select>`;
+    if (meta.type === 'canton') {
+      var co = SWISS_CANTONS.map(function(c){return '<option value="'+c+'">'+c+'</option>';}).join('');
+      return '<select class="field-input" data-field-id="'+eid+'" data-field-type="str"><option value="">--</option>'+co+'</select>';
     }
-
-    // Enum / allowed values from backend
-    if (allowed && allowed.length > 0) {
-      const opts = allowed.map(v => `<option value="${escapeHtml(String(v))}">${escapeHtml(String(v))}</option>`).join('');
-      return `<select class="field-input" data-field-id="${escapeHtml(id)}" data-field-type="${escapeHtml(backendType)}">
-        <option value="">—</option>${opts}
-      </select>`;
+    if (meta.type === 'select') {
+      var pairs = (meta.options && meta.options[currentLang]) || (meta.options && meta.options.en) || [];
+      var so = pairs.map(function(p){return '<option value="'+escapeHtml(p[0])+'">'+escapeHtml(p[1])+'</option>';}).join('');
+      return '<select class="field-input" data-field-id="'+eid+'" data-field-type="str"><option value="">--</option>'+so+'</select>';
     }
-
-    // Number fields
-    if (backendType === 'int' || backendType === 'float' || (meta && meta.type === 'number')) {
-      const step = meta ? meta.step : (backendType === 'int' ? 1 : 'any');
-      const min = meta && meta.min != null ? ` min="${meta.min}"` : '';
-      const max = meta && meta.max != null ? ` max="${meta.max}"` : '';
-      const dtype = backendType === 'float' ? 'float' : (backendType === 'int' ? 'int' : 'number');
-      return `<input class="field-input" type="number" step="${step}"${min}${max} data-field-id="${escapeHtml(id)}" data-field-type="${dtype}" />`;
+    if (meta.type === 'enum') {
+      var eo = meta.allowed.map(function(v){return '<option value="'+escapeHtml(String(v))+'">'+escapeHtml(String(v))+'</option>';}).join('');
+      return '<select class="field-input" data-field-id="'+eid+'" data-field-type="str"><option value="">--</option>'+eo+'</select>';
     }
-
-    // Default: text input
-    return `<input class="field-input" type="text" data-field-id="${escapeHtml(id)}" data-field-type="str" />`;
+    if (meta.type === 'number') {
+      var a = '';
+      if (meta.min != null) a += ' min="'+meta.min+'"';
+      if (meta.max != null) a += ' max="'+meta.max+'"';
+      a += ' step="'+(meta.step||'any')+'"';
+      return '<input class="field-input" type="number"'+a+' data-field-id="'+eid+'" data-field-type="number" />';
+    }
+    return '<input class="field-input" type="text" data-field-id="'+eid+'" data-field-type="str" />';
   }
 
   function buildMissingFieldsHtml(missingFields, lang) {
-    const t = i18n[lang] || i18n.en;
-    let html = `<p>${escapeHtml(t.missingFieldsIntro)}</p>`;
+    var t = i18n[lang] || i18n.en;
+    var html = '<p>'+escapeHtml(t.missingFieldsIntro)+'</p>';
     html += '<form class="missing-fields-form" onsubmit="handleMissingFieldsSubmit(event)">';
-    html += '<table class="missing-fields-table">';
-    missingFields.forEach(field => {
-      const label = typeof field === 'object'
-        ? (field.description || getFieldLabel(field.id, lang))
-        : getFieldLabel(field, lang);
-      const lawRef = typeof field === 'object' ? field.law_reference : null;
-      html += '<tr><td>' + escapeHtml(label);
-      if (lawRef) html += `<span class="law-ref">(${escapeHtml(lawRef)})</span>`;
-      html += '</td><td>' + buildFieldInput(field) + '</td></tr>';
+    html += '<div class="missing-fields-grid">';
+    missingFields.forEach(function(field) {
+      var id = typeof field === 'object' ? field.id : field;
+      var label = typeof field === 'object' ? (field.description || getFieldLabel(field.id, lang)) : getFieldLabel(field, lang);
+      var lawRef = typeof field === 'object' ? field.law_reference : null;
+      html += '<div class="field-group">';
+      html += '<label class="field-label">'+escapeHtml(label);
+      if (lawRef) html += ' <span class="law-ref">('+escapeHtml(lawRef)+')</span>';
+      html += '</label>';
+      html += buildFieldInput(field);
+      html += '</div>';
     });
-    html += '</table>';
-    html += `<div class="missing-fields-submit"><button type="submit">${escapeHtml(t.submit || 'Submit')}</button></div>`;
+    html += '</div>';
+    html += '<div class="missing-fields-submit"><button type="submit">'+escapeHtml(getSubmitLabel(lang))+'</button></div>';
     html += '</form>';
     return html;
   }
 
   function handleMissingFieldsSubmit(e) {
     e.preventDefault();
-    const form = e.target;
-    const inputs = form.querySelectorAll('.field-input');
-    let anyFilled = false;
-    inputs.forEach(el => {
-      const val = el.value.trim();
+    var form = e.target;
+    var inputs = form.querySelectorAll('.field-input');
+    var parsed = {};
+    var anyFilled = false;
+    inputs.forEach(function(el) {
+      var val = el.value.trim();
       if (!val) return;
-      const id = el.dataset.fieldId;
-      const type = el.dataset.fieldType;
+      var id = el.dataset.fieldId;
+      var type = el.dataset.fieldType;
       anyFilled = true;
-      if (type === 'bool') {
-        knownParameters[id] = val === 'true';
-      } else if (type === 'int' || type === 'float' || type === 'number') {
-        knownParameters[id] = Number(val);
-      } else {
-        knownParameters[id] = val;
-      }
+      if (type === 'bool') parsed[id] = val === 'true';
+      else if (type === 'number') parsed[id] = Number(val);
+      else parsed[id] = val;
     });
     if (!anyFilled) return;
-    // Disable form after submit and show loading state
-    inputs.forEach(el => { el.disabled = true; });
-    const btn = form.querySelector('button[type="submit"]');
-    if (btn) { btn.disabled = true; btn.textContent = '…'; }
-    // Re-call backend with updated knownParameters (no user message bubble)
-    processQueryWithoutUserMessage();
-  }
-
-  async function processQueryWithoutUserMessage() {
-    const fullContext = initialDescription || '';
-    showTyping();
-    const payload = { case_description: fullContext, execute: true, language: currentLang };
-    if (Object.keys(knownParameters).length > 0) {
-      payload.known_parameters = knownParameters;
-    }
-    try {
-      const data = await callBackend(payload);
-      hideTyping();
-      if (data.input_parameters) {
-        Object.values(data.input_parameters).forEach(params => {
-          if (params && typeof params === 'object') {
-            Object.entries(params).forEach(([k, v]) => {
-              if (v !== null && v !== undefined) knownParameters[k] = v;
-            });
-          }
-        });
-      }
-      if (data.error) {
-        const hasLaws = Array.isArray(data.applicable_laws) && data.applicable_laws.length > 0;
-        if (hasLaws) {
-          data._errorFootnote = data.error;
-          pendingFields = [];
-          addLegalAnswer(data);
-        } else {
-          addBotMessage(data.error);
-        }
-      } else {
-        const missing = Array.isArray(data.missing_parameters) ? data.missing_parameters : [];
-        if (missing.length > 0) {
-          pendingFields = missing;
-          addBotHtml(buildMissingFieldsHtml(missing, currentLang));
-        } else {
-          pendingFields = [];
-          addLegalAnswer(data);
-        }
-      }
-    } catch (err) {
-      hideTyping();
-      const errDiv = document.createElement('div');
-      errDiv.className = 'exec-error';
-      errDiv.innerText = 'Backend error: ' + err.message;
-      document.getElementById('chatBox').appendChild(errDiv);
-    }
+    Object.assign(knownParameters, parsed);
+    form.querySelectorAll('button, input, select').forEach(function(el){ el.disabled = true; });
+    var summary = Object.entries(parsed).map(function(p){ return humanizeVariable(p[0])+': '+p[1]; }).join(', ');
+    processQuery(summary);
   }
 
   function addBotMessage(text) {
-    const div = document.createElement('div');
+    var div = document.createElement('div');
     div.className = 'msg bot';
-    const paragraphs = text.split('\n').filter(line => line.trim() !== '');
-    paragraphs.forEach(para => {
-      const p = document.createElement('p');
-      p.textContent = para;
-      div.appendChild(p);
+    text.split('\n').filter(function(l){return l.trim()!=='';}).forEach(function(para) {
+      var p = document.createElement('p'); p.textContent = para; div.appendChild(p);
     });
-    const box = document.getElementById('chatBox');
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
+    var box = document.getElementById('chatBox');
+    box.appendChild(div); box.scrollTop = box.scrollHeight;
   }
 
   function addBotHtml(html) {
-    const div = document.createElement('div');
-    div.className = 'msg bot';
-    div.innerHTML = html;
-    const box = document.getElementById('chatBox');
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
+    var div = document.createElement('div');
+    div.className = 'msg bot'; div.innerHTML = html;
+    var box = document.getElementById('chatBox');
+    box.appendChild(div); box.scrollTop = box.scrollHeight;
   }
 
   function articleMatchesApplicable(blockArticle, applicableLaws) {
-    return applicableLaws.some(l => blockArticle.startsWith(l));
+    return applicableLaws.some(function(l){return blockArticle.startsWith(l);});
   }
 
   function stripTrailingPeriod(s) { return s ? s.replace(/[.\s]+$/, '') : s; }
@@ -686,228 +580,144 @@
   function formatComputedValue(value, variable, t) {
     if (typeof value === 'boolean') return value ? t.yes : t.no;
     if (typeof value === 'number') {
-      const formatted = Number.isInteger(value)
-        ? value.toLocaleString()
-        : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
-      const monetary = /amount|contribution|salary|income|wage|tax|chf|franc|betrag|beitrag|revenu|salaire|reddito/i;
-      return monetary.test(variable) ? 'CHF ' + formatted : formatted;
+      var formatted = Number.isInteger(value) ? value.toLocaleString() : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+      return /amount|contribution|salary|income|wage|tax|chf|franc|betrag|beitrag|revenu|salaire|reddito/i.test(variable) ? 'CHF ' + formatted : formatted;
     }
     return String(value);
   }
 
   function renderLegalAnswer(data) {
-    const t = i18n[currentLang] || i18n.en;
-    const syllogism = parseSyllogism(data.syllogistic_reasoning);
-    const applicableLaws = data.applicable_laws || [];
-    const computedValues = (data.execution && data.execution.computed_values) || {};
-
-    const articleToComputed = {};
-    (data.code_generation || []).forEach(cg => {
+    var t = i18n[currentLang] || i18n.en;
+    var syllogism = parseSyllogism(data.syllogistic_reasoning);
+    var applicableLaws = data.applicable_laws || [];
+    var computedValues = (data.execution && data.execution.computed_values) || {};
+    var articleToComputed = {};
+    (data.code_generation || []).forEach(function(cg) {
       if (computedValues[cg.openfisca_variable] !== undefined) {
-        articleToComputed[cg.article_reference] = {
-          variable: cg.openfisca_variable,
-          value: computedValues[cg.openfisca_variable]
-        };
+        articleToComputed[cg.article_reference] = { variable: cg.openfisca_variable, value: computedValues[cg.openfisca_variable] };
       }
     });
 
-    if (applicableLaws.length === 0) {
-      return `<div class="msg bot"><p>${escapeHtml(t.noLaws)}</p></div>`;
-    }
+    if (applicableLaws.length === 0) return '<div class="msg bot"><p>'+escapeHtml(t.noLaws)+'</p></div>';
 
-    // Use legal_reasoning from server if available, fallback to client-side compose
-    let mainParagraphs;
-    const hasLegalReasoning = typeof data.legal_reasoning === 'string' && data.legal_reasoning.trim().length > 0;
+    var mainParagraphs;
+    var hasLR = typeof data.legal_reasoning === 'string' && data.legal_reasoning.trim().length > 0;
 
-    if (hasLegalReasoning) {
-      mainParagraphs = data.legal_reasoning.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+    if (hasLR) {
+      mainParagraphs = data.legal_reasoning.split(/\n\n+/).map(function(p){return p.trim();}).filter(Boolean);
     } else {
-      const applicableBlocks = syllogism.filter(s => s.article && articleMatchesApplicable(s.article, applicableLaws));
-      const excludedBlocksFallback = syllogism.filter(s => s.article && !articleMatchesApplicable(s.article, applicableLaws));
-
-      const sentences = [];
-      applicableBlocks.forEach((block, i) => {
-        const minor = block.premises.find(p => p.type === 'minor');
-        const conclusion = block.premises.find(p => p.type === 'conclusion');
-        const articleRef = applicableLaws.find(l => block.article.startsWith(l)) || block.article;
-        const computed = articleToComputed[articleRef];
-
+      var appBlocks = syllogism.filter(function(s){return s.article && articleMatchesApplicable(s.article, applicableLaws);});
+      var excBlocks = syllogism.filter(function(s){return s.article && !articleMatchesApplicable(s.article, applicableLaws);});
+      var sentences = [];
+      appBlocks.forEach(function(block, i) {
+        var minor = block.premises.find(function(p){return p.type==='minor';});
+        var conclusion = block.premises.find(function(p){return p.type==='conclusion';});
+        var articleRef = applicableLaws.find(function(l){return block.article.startsWith(l);}) || block.article;
+        var computed = articleToComputed[articleRef];
         if (i === 0 && minor) sentences.push(stripTrailingPeriod(minor.text) + '.');
         if (conclusion) {
-          let s = stripTrailingPeriod(conclusion.text);
+          var s = stripTrailingPeriod(conclusion.text);
           if (computed && typeof computed.value === 'number') {
-            const amount = computed.value.toLocaleString(undefined, { maximumFractionDigits: 2 });
-            s += ` ${t.concretely.toLowerCase()} ${amount} ${t.chf} ${t.perMonth}`;
+            s += ' ' + t.concretely.toLowerCase() + ' ' + computed.value.toLocaleString(undefined,{maximumFractionDigits:2}) + ' ' + t.chf + ' ' + t.perMonth;
           }
           sentences.push(s + '.');
         }
       });
-
       mainParagraphs = [];
       if (sentences.length) mainParagraphs.push(sentences.join(' '));
-
-      // Excluded articles in fallback
-      if (excludedBlocksFallback.length) {
-        const excludedSentences = excludedBlocksFallback
-          .map(b => { const c = b.premises.find(p => p.type === 'conclusion'); return c ? stripTrailingPeriod(c.text) + '.' : null; })
-          .filter(Boolean);
-        if (excludedSentences.length) mainParagraphs.push(`${t.alsoConsidered} ${excludedSentences.join(' ')}`);
+      if (excBlocks.length) {
+        var es = excBlocks.map(function(b){var c=b.premises.find(function(p){return p.type==='conclusion';});return c?stripTrailingPeriod(c.text)+'.':null;}).filter(Boolean);
+        if (es.length) mainParagraphs.push(t.alsoConsidered+' '+es.join(' '));
       }
+      if (data.execution && !data.execution.success && !data._suppressExecFailNote) mainParagraphs.push(t.execFailNote);
+    }
 
-      if (data.execution && !data.execution.success && !data._suppressExecFailNote) {
-        mainParagraphs.push(t.execFailNote);
+    var excludedHtml = '';
+    if (hasLR) {
+      var eb = syllogism.filter(function(s){return s.article && !applicableLaws.some(function(l){return s.article.startsWith(l);});});
+      if (eb.length) {
+        var es2 = eb.map(function(b){var c=b.premises.find(function(p){return p.type==='conclusion';});return c?stripTrailingPeriod(c.text)+'.':null;}).filter(Boolean);
+        if (es2.length) excludedHtml = '<p>'+escapeHtml(t.alsoConsidered+' '+es2.join(' '))+'</p>';
       }
     }
 
-    // Excluded articles paragraph (from syllogism, when using legal_reasoning)
-    let excludedHtml = '';
-    if (hasLegalReasoning) {
-      const excludedBlocks = syllogism.filter(s => s.article && !applicableLaws.some(l => s.article.startsWith(l)));
-      if (excludedBlocks.length) {
-        const excludedSentences = excludedBlocks
-          .map(b => { const c = b.premises.find(p => p.type === 'conclusion'); return c ? stripTrailingPeriod(c.text) + '.' : null; })
-          .filter(Boolean);
-        if (excludedSentences.length) {
-          excludedHtml = `<p>${escapeHtml(t.alsoConsidered + ' ' + excludedSentences.join(' '))}</p>`;
-        }
-      }
-    }
+    var html = mainParagraphs.map(function(p){return '<p>'+escapeHtml(p)+'</p>';}).join('') + excludedHtml;
 
-    let html = mainParagraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
-    html += excludedHtml;
-
-    // Computed values block
-    const cvEntries = Object.entries(computedValues);
-    const legalReasoningText = hasLegalReasoning ? data.legal_reasoning : '';
-    const showComputed = data.execution && data.execution.success && cvEntries.length > 0 &&
-      !cvEntries.every(([, v]) => legalReasoningText.includes(String(v)));
-
-    if (showComputed) {
-      html += '<div class="computed-results">';
-      html += `<strong>${escapeHtml(t.computedResults)}</strong>`;
-      html += '<ul>';
-      cvEntries.forEach(([variable, value]) => {
-        html += `<li><span class="label">${escapeHtml(humanizeVariable(variable))}: </span><span class="value">${escapeHtml(formatComputedValue(value, variable, t))}</span></li>`;
-      });
+    var cvEntries = Object.entries(computedValues);
+    var lrText = hasLR ? data.legal_reasoning : '';
+    if (data.execution && data.execution.success && cvEntries.length > 0 && !cvEntries.every(function(p){return lrText.includes(String(p[1]));})) {
+      html += '<div class="computed-results"><strong>'+escapeHtml(t.computedResults)+'</strong><ul>';
+      cvEntries.forEach(function(p){ html += '<li><span class="label">'+escapeHtml(humanizeVariable(p[0]))+': </span><span class="value">'+escapeHtml(formatComputedValue(p[1],p[0],t))+'</span></li>'; });
       html += '</ul></div>';
     }
-
-    // Law citations
-    if (applicableLaws.length > 0) {
-      html += `<div class="legal-citations">${escapeHtml(t.legalBasis)}: ${escapeHtml(applicableLaws.join(', '))}</div>`;
-    }
-
-    // Error footnote
-    if (data._errorFootnote) {
-      html += `<div class="error-footnote">${escapeHtml(data._errorFootnote)}</div>`;
-    }
-
-    // Processing time
-    if (data.processing_time_seconds != null) {
-      html += `<div class="processing-time">${escapeHtml(t.processedIn)} ${data.processing_time_seconds.toFixed(1)}s</div>`;
-    }
-
-    return `<div class="msg bot">${html}</div>`;
+    if (applicableLaws.length > 0) html += '<div class="legal-citations">'+escapeHtml(t.legalBasis)+': '+escapeHtml(applicableLaws.join(', '))+'</div>';
+    if (data._errorFootnote) html += '<div class="error-footnote">'+escapeHtml(data._errorFootnote)+'</div>';
+    if (data.processing_time_seconds != null) html += '<div class="processing-time">'+escapeHtml(t.processedIn)+' '+data.processing_time_seconds.toFixed(1)+'s</div>';
+    return '<div class="msg bot">'+html+'</div>';
   }
 
-  // ============================================================
-  // CHAT FLOW
-  // ============================================================
   function useSuggestion(el) {
     document.getElementById('heroInput').value = el.querySelector('span').innerText;
     document.getElementById('heroInput').focus();
   }
 
   function addUserMessage(text) {
-    const div = document.createElement('div');
-    div.className = 'msg user';
-    div.innerText = text;
-    const box = document.getElementById('chatBox');
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
+    var div = document.createElement('div'); div.className = 'msg user'; div.innerText = text;
+    var box = document.getElementById('chatBox'); box.appendChild(div); box.scrollTop = box.scrollHeight;
   }
 
   function addLegalAnswer(data) {
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderLegalAnswer(data);
-    const box = document.getElementById('chatBox');
-    box.appendChild(wrap.firstElementChild);
-    box.scrollTop = box.scrollHeight;
+    var wrap = document.createElement('div'); wrap.innerHTML = renderLegalAnswer(data);
+    var box = document.getElementById('chatBox'); box.appendChild(wrap.firstElementChild); box.scrollTop = box.scrollHeight;
   }
 
   function showTyping() {
-    const div = document.createElement('div');
-    div.className = 'typing';
-    div.id = 'typingIndicator';
+    var div = document.createElement('div'); div.className = 'typing'; div.id = 'typingIndicator';
     div.innerHTML = '<span></span><span></span><span></span>';
     document.getElementById('chatBox').appendChild(div);
     document.getElementById('chatBox').scrollTop = 99999;
   }
 
-  function hideTyping() {
-    const t = document.getElementById('typingIndicator');
-    if (t) t.remove();
-  }
+  function hideTyping() { var t = document.getElementById('typingIndicator'); if (t) t.remove(); }
 
   async function processQuery(text) {
     addUserMessage(text);
-    if (!initialDescription) {
-      initialDescription = text;
-    }
-    const fullContext = initialDescription !== text
-      ? initialDescription + "\n\n" + text
-      : text;
+    if (!initialDescription) initialDescription = text;
+    var fullContext = initialDescription !== text ? initialDescription + "\n\n" + text : text;
     showTyping();
-    const payload = { case_description: fullContext, execute: true, language: currentLang };
-    if (Object.keys(knownParameters).length > 0) {
-      payload.known_parameters = knownParameters;
-    }
+    var payload = { case_description: fullContext, execute: true, language: currentLang };
+    if (Object.keys(knownParameters).length > 0) payload.known_parameters = knownParameters;
     try {
-      const data = await callBackend(payload);
+      var data = await callBackend(payload);
       hideTyping();
-
-      // Merge input_parameters into knownParameters for follow-ups
       if (data.input_parameters) {
-        Object.values(data.input_parameters).forEach(params => {
+        Object.values(data.input_parameters).forEach(function(params) {
           if (params && typeof params === 'object') {
-            Object.entries(params).forEach(([k, v]) => {
-              if (v !== null && v !== undefined) knownParameters[k] = v;
+            Object.entries(params).forEach(function(pair) {
+              if (pair[1] !== null && pair[1] !== undefined) knownParameters[pair[0]] = pair[1];
             });
           }
         });
       }
-
-      // Handle top-level error from backend
       if (data.error) {
-        const hasLaws = Array.isArray(data.applicable_laws) && data.applicable_laws.length > 0;
-        if (hasLaws) {
-          data._errorFootnote = data.error;
-          pendingFields = [];
-          addLegalAnswer(data);
-        } else {
-          addBotMessage(data.error);
-        }
+        var hasLaws = Array.isArray(data.applicable_laws) && data.applicable_laws.length > 0;
+        if (hasLaws) { data._errorFootnote = data.error; pendingFields = []; addLegalAnswer(data); }
+        else addBotMessage(data.error);
       } else {
-        const missing = Array.isArray(data.missing_parameters) ? data.missing_parameters : [];
-        if (missing.length > 0) {
-          pendingFields = missing;
-          addBotHtml(buildMissingFieldsHtml(missing, currentLang));
-        } else {
-          pendingFields = [];
-          addLegalAnswer(data);
-        }
+        var missing = Array.isArray(data.missing_parameters) ? data.missing_parameters : [];
+        if (missing.length > 0) { pendingFields = missing; addBotHtml(buildMissingFieldsHtml(missing, currentLang)); }
+        else { pendingFields = []; addLegalAnswer(data); }
       }
     } catch (err) {
       hideTyping();
-      const errDiv = document.createElement('div');
-      errDiv.className = 'exec-error';
+      var errDiv = document.createElement('div'); errDiv.className = 'exec-error';
       errDiv.innerText = 'Backend error: ' + err.message;
       document.getElementById('chatBox').appendChild(errDiv);
     }
   }
 
   function startChat() {
-    const text = document.getElementById('heroInput').value.trim();
+    var text = document.getElementById('heroInput').value.trim();
     if (!text) return;
     document.getElementById('hero').classList.add('hidden');
     document.getElementById('chatView').classList.add('visible');
@@ -915,8 +725,8 @@
   }
 
   function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const text = input.value.trim();
+    var input = document.getElementById('chatInput');
+    var text = input.value.trim();
     if (!text) return;
     input.value = '';
     processQuery(text);
@@ -927,9 +737,7 @@
     document.getElementById('chatView').classList.remove('visible');
     document.getElementById('hero').classList.remove('hidden');
     document.getElementById('heroInput').value = '';
-    pendingFields = [];
-    initialDescription = '';
-    knownParameters = {};
+    pendingFields = []; initialDescription = ''; knownParameters = {};
   }
 </script>
 
