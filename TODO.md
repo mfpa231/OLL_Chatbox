@@ -19,7 +19,7 @@
 
 ## Responsive Design
 - [ ] **12. Mobile layout for forms** — The table-based missing-fields form may not render well on narrow screens. Add responsive breakpoints.
-- [ ] **13. Chat container sizing** — Fixed height on `.chat-view` may clip on small viewports or waste space on large ones. Consider dynamic sizing.
+- [x] **13. Chat container sizing** — Fixed height on `.chat-view` may clip on small viewports or waste space on large ones. Consider dynamic sizing.
 - [ ] **14. Mobile chat input** — Send button text may be cramped on narrow screens; consider an icon fallback.
 
 ## Security
