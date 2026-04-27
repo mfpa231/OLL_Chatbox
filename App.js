@@ -1,6 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import openLegalLabLogo from "./open-legal-lab.png";
+import {
+  i18n,
+  fieldLabels,
+  SWISS_CANTONS,
+  SUGGESTIONS,
+  parseSyllogism,
+  humanizeVariable,
+  stripTrailingPeriod,
+  getFieldLabel,
+  getSubmitLabel,
+  resolveFieldMeta,
+  validateField,
+  formatComputedValue,
+  composeNaturalReply,
+} from "./shared.js";
 
 // ============================================================
 // BACKEND API
@@ -22,246 +37,17 @@ async function callBackend(payload) {
 }
 
 // ============================================================
-// I18N
-// ============================================================
-const i18n = {
-  en: {
-    concretely: "In concrete terms,", chf: "CHF", perMonth: "per month",
-    alsoConsidered: "I also considered some other rules that don't apply here:",
-    execFailNote: "I wasn't able to compute the exact figures due to a technical issue, but the legal reasoning above still holds.",
-    noLaws: "I couldn't identify any applicable Swiss federal law articles for this situation. Could you give me more details?",
-    missingFieldsIntro: "To provide a complete legal analysis, I still need the following information:",
-    missingFieldsOutro: "Please provide these details so I can give you a precise answer.",
-    computedResults: "Computed results:", yes: "Yes", no: "No",
-    legalBasis: "Legal basis", processedIn: "Processed in",
-  },
-  fr: {
-    concretely: "Concr\u00e8tement,", chf: "CHF", perMonth: "par mois",
-    alsoConsidered: "J'ai aussi examin\u00e9 d'autres r\u00e8gles qui ne s'appliquent pas ici :",
-    execFailNote: "Je n'ai pas pu calculer le montant exact en raison d'un probl\u00e8me technique, mais le raisonnement juridique ci-dessus reste valide.",
-    noLaws: "Je n'ai pas pu identifier d'articles de droit f\u00e9d\u00e9ral applicables \u00e0 cette situation. Pourriez-vous me donner plus de d\u00e9tails ?",
-    missingFieldsIntro: "Pour fournir une analyse juridique compl\u00e8te, j'ai encore besoin des informations suivantes :",
-    missingFieldsOutro: "Veuillez fournir ces d\u00e9tails afin que je puisse vous donner une r\u00e9ponse pr\u00e9cise.",
-    computedResults: "R\u00e9sultats calcul\u00e9s :", yes: "Oui", no: "Non",
-    legalBasis: "Base l\u00e9gale", processedIn: "Trait\u00e9 en",
-  },
-  de: {
-    concretely: "Konkret,", chf: "CHF", perMonth: "pro Monat",
-    alsoConsidered: "Ich habe auch andere Regeln gepr\u00fcft, die hier nicht gelten:",
-    execFailNote: "Ich konnte den genauen Betrag aufgrund eines technischen Problems nicht berechnen, aber die rechtliche Argumentation bleibt g\u00fcltig.",
-    noLaws: "F\u00fcr diese Situation konnten keine anwendbaren Artikel des Bundesrechts identifiziert werden. K\u00f6nnten Sie mir weitere Details geben?",
-    missingFieldsIntro: "Um eine vollst\u00e4ndige rechtliche Analyse zu erstellen, ben\u00f6tige ich noch folgende Informationen:",
-    missingFieldsOutro: "Bitte geben Sie diese Details an, damit ich Ihnen eine genaue Antwort geben kann.",
-    computedResults: "Berechnete Ergebnisse:", yes: "Ja", no: "Nein",
-    legalBasis: "Rechtsgrundlage", processedIn: "Verarbeitet in",
-  },
-  it: {
-    concretely: "Concretamente,", chf: "CHF", perMonth: "al mese",
-    alsoConsidered: "Ho anche considerato altre regole che non si applicano in questo caso:",
-    execFailNote: "Non sono riuscito a calcolare l'importo esatto a causa di un problema tecnico, ma il ragionamento giuridico sopra resta valido.",
-    noLaws: "Non sono riuscito a identificare articoli di diritto federale applicabili a questa situazione. Potrebbe fornirmi maggiori dettagli?",
-    missingFieldsIntro: "Per fornire un'analisi giuridica completa, ho ancora bisogno delle seguenti informazioni:",
-    missingFieldsOutro: "Vi prego di fornire questi dettagli affinch\u00e9 possa darvi una risposta precisa.",
-    computedResults: "Risultati calcolati:", yes: "S\u00ec", no: "No",
-    legalBasis: "Base giuridica", processedIn: "Elaborato in",
-  },
-};
-
-// ============================================================
-// SYLLOGISM PARSER
-// ============================================================
-function parseSyllogism(text) {
-  if (!text) return [];
-
-  if (text.includes("---")) {
-    return text
-      .split(/\n*---\n*/)
-      .map((b) => b.trim())
-      .filter(Boolean)
-      .map((block) => {
-        const premises = [];
-        const lines = block.split(/\n+/);
-        let currentType = null;
-        let buffer = [];
-        const flush = () => {
-          if (currentType && buffer.length) premises.push({ type: currentType, text: buffer.join(" ").trim() });
-          buffer = [];
-        };
-        lines.forEach((line) => {
-          const m = line.match(/^\s*(Major\s*Premise|Minor\s*Premise|Conclusion)\s*:\s*(.*)/i);
-          if (m) {
-            flush();
-            currentType = m[1].toLowerCase().includes("major") ? "major" : m[1].toLowerCase().includes("minor") ? "minor" : "conclusion";
-            if (m[2]) buffer.push(m[2]);
-          } else if (currentType) buffer.push(line);
-        });
-        flush();
-        const major = premises.find((p) => p.type === "major");
-        const articleMatch = major ? major.text.match(/art\.\s*(\d+[a-z]?)\s*([A-Z]{2,5})/i) : null;
-        const article = articleMatch ? `${articleMatch[2].toUpperCase()} Art. ${articleMatch[1]}` : "";
-        return { article, premises };
-      });
-  }
-
-  return text
-    .split(/\n\n+/)
-    .map((b) => b.trim())
-    .filter(Boolean)
-    .map((block) => {
-      const headerMatch = block.match(/\*\*([^*]+)\*\*/);
-      const article = headerMatch ? headerMatch[1].trim() : "";
-      const premises = block.split("\n").slice(1).map((line) => {
-        const m = line.match(/-\s*(Major premise|Minor premise|Conclusion)\s*:\s*(.+)/i);
-        if (!m) return null;
-        const type = m[1].toLowerCase().includes("major") ? "major" : m[1].toLowerCase().includes("minor") ? "minor" : "conclusion";
-        return { type, text: m[2].trim() };
-      }).filter(Boolean);
-      return { article, premises };
-    });
-}
-
-// ============================================================
-// HELPERS
-// ============================================================
-function humanizeVariable(v) {
-  return v.replace(/_/g, " ").replace(/\bahv\b/gi, "AHV");
-}
-
-function articleMatchesApplicable(blockArticle, applicableLaws) {
-  return applicableLaws.some((l) => blockArticle.startsWith(l));
-}
-
-const SUGGESTIONS = [
-  "Anna works in Zurich earning 85000 CHF/year as an employee",
-  "My neighbor's tree fell on my car during a storm, who is liable for the damage?",
-  "I'm a 20-year-old student living in Bern, can I get a scholarship for my university studies?",
-];
-
-// ============================================================
-// FIELD LABELS
-// ============================================================
-const fieldLabels = {
-  income: { en: "Income", fr: "Revenu", de: "Einkommen", it: "Reddito" },
-  canton: { en: "Canton of residence", fr: "Canton de r\u00e9sidence", de: "Wohnkanton", it: "Cantone di residenza" },
-  employment_status: { en: "Employment status", fr: "Statut d'emploi", de: "Besch\u00e4ftigungsstatus", it: "Stato occupazionale" },
-  age: { en: "Age", fr: "\u00c2ge", de: "Alter", it: "Et\u00e0" },
-  nationality: { en: "Nationality", fr: "Nationalit\u00e9", de: "Staatsangeh\u00f6rigkeit", it: "Nazionalit\u00e0" },
-  marital_status: { en: "Marital status", fr: "\u00c9tat civil", de: "Zivilstand", it: "Stato civile" },
-  num_children: { en: "Number of children", fr: "Nombre d'enfants", de: "Anzahl Kinder", it: "Numero di figli" },
-  residence_permit: { en: "Residence permit type", fr: "Type de permis de s\u00e9jour", de: "Aufenthaltsbewilligung", it: "Tipo di permesso di soggiorno" },
-  years_in_switzerland: { en: "Years in Switzerland", fr: "Ann\u00e9es en Suisse", de: "Jahre in der Schweiz", it: "Anni in Svizzera" },
-  employer_type: { en: "Employer type", fr: "Type d'employeur", de: "Arbeitgebertyp", it: "Tipo di datore di lavoro" },
-  weekly_hours: { en: "Weekly working hours", fr: "Heures de travail hebdomadaires", de: "W\u00f6chentliche Arbeitsstunden", it: "Ore di lavoro settimanali" },
-  church_member: { en: "Church membership", fr: "Appartenance \u00e0 une \u00e9glise", de: "Kirchenmitgliedschaft", it: "Appartenenza a una chiesa" },
-  salary: { en: "Salary", fr: "Salaire", de: "Gehalt", it: "Stipendio" },
-  tax_class: { en: "Tax class", fr: "Classe d'imp\u00f4t", de: "Steuerklasse", it: "Classe fiscale" },
-  work_canton: { en: "Canton of employment", fr: "Canton d'emploi", de: "Arbeitskanton", it: "Cantone di lavoro" },
-  occupation: { en: "Occupation", fr: "Profession", de: "Beruf", it: "Professione" },
-  self_employed: { en: "Self-employed status", fr: "Statut ind\u00e9pendant", de: "Selbstst\u00e4ndigkeitsstatus", it: "Stato di lavoratore autonomo" },
-  birth_date: { en: "Date of birth", fr: "Date de naissance", de: "Geburtsdatum", it: "Data di nascita" },
-  gender: { en: "Gender", fr: "Genre", de: "Geschlecht", it: "Geschlecht" },
-};
-
-function getFieldLabel(fieldKey, lang) {
-  const entry = fieldLabels[fieldKey];
-  if (entry && entry[lang]) return entry[lang];
-  if (entry && entry.en) return entry.en;
-  return humanizeVariable(fieldKey);
-}
-
-// ============================================================
-// FIELD META — input type + constraints for form rendering
-// ============================================================
-const fieldMeta = {
-  income:       { type: "number", min: 0, max: 10000000, step: 1000 },
-  age:          { type: "number", min: 0, max: 150, step: 1 },
-  num_children: { type: "number", min: 0, max: 30, step: 1 },
-  years_in_switzerland: { type: "number", min: 0, max: 150, step: 1 },
-  weekly_hours: { type: "number", min: 0, max: 168, step: 0.5 },
-  salary:       { type: "number", min: 0, max: 10000000, step: 100 },
-  church_member: { type: "boolean" },
-  self_employed: { type: "boolean" },
-  canton:       { type: "canton" },
-  work_canton:  { type: "canton" },
-  gender: {
-    type: "select",
-    options: {
-      en: [["male","Male"],["female","Female"],["other","Other"]],
-      fr: [["male","Masculin"],["female","F\u00e9minin"],["other","Autre"]],
-      de: [["male","M\u00e4nnlich"],["female","Weiblich"],["other","Andere"]],
-      it: [["male","Maschile"],["female","Femminile"],["other","Altro"]],
-    },
-  },
-  marital_status: {
-    type: "select",
-    options: {
-      en: [["single","Single"],["married","Married"],["divorced","Divorced"],["widowed","Widowed"],["separated","Separated"]],
-      fr: [["single","C\u00e9libataire"],["married","Mari\u00e9(e)"],["divorced","Divorc\u00e9(e)"],["widowed","Veuf/Veuve"],["separated","S\u00e9par\u00e9(e)"]],
-      de: [["single","Ledig"],["married","Verheiratet"],["divorced","Geschieden"],["widowed","Verwitwet"],["separated","Getrennt"]],
-      it: [["single","Celibe/Nubile"],["married","Sposato/a"],["divorced","Divorziato/a"],["widowed","Vedovo/a"],["separated","Separato/a"]],
-    },
-  },
-  employment_status: {
-    type: "select",
-    options: {
-      en: [["employed","Employed"],["self_employed","Self-employed"],["unemployed","Unemployed"],["student","Student"],["retired","Retired"]],
-      fr: [["employed","Employ\u00e9(e)"],["self_employed","Ind\u00e9pendant(e)"],["unemployed","Sans emploi"],["student","\u00c9tudiant(e)"],["retired","Retrait\u00e9(e)"]],
-      de: [["employed","Angestellt"],["self_employed","Selbstst\u00e4ndig"],["unemployed","Arbeitslos"],["student","Student(in)"],["retired","Pensioniert"]],
-      it: [["employed","Impiegato/a"],["self_employed","Indipendente"],["unemployed","Disoccupato/a"],["student","Studente/ssa"],["retired","Pensionato/a"]],
-    },
-  },
-  residence_permit: {
-    type: "select",
-    options: {
-      en: [["C","C \u2014 Settlement"],["B","B \u2014 Residence"],["L","L \u2014 Short-term"],["G","G \u2014 Cross-border"],["F","F \u2014 Provisional"],["N","N \u2014 Asylum seeker"],["swiss","Swiss citizen"]],
-      fr: [["C","C \u2014 \u00c9tablissement"],["B","B \u2014 S\u00e9jour"],["L","L \u2014 Courte dur\u00e9e"],["G","G \u2014 Frontalier"],["F","F \u2014 Admission provisoire"],["N","N \u2014 Requ\u00e9rant d'asile"],["swiss","Citoyen(ne) suisse"]],
-      de: [["C","C \u2014 Niederlassung"],["B","B \u2014 Aufenthalt"],["L","L \u2014 Kurzaufenthalt"],["G","G \u2014 Grenzg\u00e4nger"],["F","F \u2014 Vorl\u00e4ufige Aufnahme"],["N","N \u2014 Asylsuchende"],["swiss","Schweizer B\u00fcrger(in)"]],
-      it: [["C","C \u2014 Domicilio"],["B","B \u2014 Dimora"],["L","L \u2014 Breve durata"],["G","G \u2014 Frontaliere"],["F","F \u2014 Ammissione provvisoria"],["N","N \u2014 Richiedente asilo"],["swiss","Cittadino/a svizzero/a"]],
-    },
-  },
-  tax_class: {
-    type: "select",
-    options: {
-      en: [["A","A"],["B","B"],["C","C"],["D","D"],["H","H"]],
-      fr: [["A","A"],["B","B"],["C","C"],["D","D"],["H","H"]],
-      de: [["A","A"],["B","B"],["C","C"],["D","D"],["H","H"]],
-      it: [["A","A"],["B","B"],["C","C"],["D","D"],["H","H"]],
-    },
-  },
-};
-
-const SWISS_CANTONS = [
-  "AG","AI","AR","BE","BL","BS","FR","GE","GL","GR",
-  "JU","LU","NE","NW","OW","SG","SH","SO","SZ","TG",
-  "TI","UR","VD","VS","ZG","ZH",
-];
-
-function getSubmitLabel(lang) {
-  return { en: "Submit", fr: "Envoyer", de: "Absenden", it: "Invia" }[lang] || "Submit";
-}
-
-function resolveFieldMeta(field) {
-  const id = typeof field === "object" ? field.id : field;
-  if (fieldMeta[id]) return { id, ...fieldMeta[id] };
-  const backendType = typeof field === "object" ? field.type : null;
-  const allowed = typeof field === "object" ? field.allowed_values : null;
-  if (backendType === "bool") return { id, type: "boolean" };
-  if (allowed && allowed.length > 0) return { id, type: "enum", allowed };
-  if (backendType === "int") return { id, type: "number", min: 0, step: 1 };
-  if (backendType === "float") return { id, type: "number", step: "any" };
-  return { id, type: "text" };
-}
-
-// ============================================================
 // FIELD INPUT COMPONENT
 // ============================================================
-function FieldInput({ field, value, onChange, lang }) {
+function FieldInput({ field, value, onChange, lang, invalid, disabled, ariaLabel }) {
   const meta = resolveFieldMeta(field);
   const t = i18n[lang] || i18n.en;
+  const cls = invalid ? "field-input invalid" : "field-input";
+  const a11y = { "aria-label": ariaLabel, "aria-invalid": invalid || undefined };
 
   if (meta.type === "boolean") {
     return (
-      <select className="field-input" value={value} onChange={(e) => onChange(meta.id, e.target.value)}>
+      <select className={cls} disabled={disabled} value={value} onChange={(e) => onChange(meta.id, e.target.value)} {...a11y}>
         <option value="">--</option>
         <option value="true">{t.yes}</option>
         <option value="false">{t.no}</option>
@@ -270,7 +56,7 @@ function FieldInput({ field, value, onChange, lang }) {
   }
   if (meta.type === "canton") {
     return (
-      <select className="field-input" value={value} onChange={(e) => onChange(meta.id, e.target.value)}>
+      <select className={cls} disabled={disabled} value={value} onChange={(e) => onChange(meta.id, e.target.value)} {...a11y}>
         <option value="">--</option>
         {SWISS_CANTONS.map((c) => <option key={c} value={c}>{c}</option>)}
       </select>
@@ -279,7 +65,7 @@ function FieldInput({ field, value, onChange, lang }) {
   if (meta.type === "select") {
     const pairs = (meta.options && meta.options[lang]) || (meta.options && meta.options.en) || [];
     return (
-      <select className="field-input" value={value} onChange={(e) => onChange(meta.id, e.target.value)}>
+      <select className={cls} disabled={disabled} value={value} onChange={(e) => onChange(meta.id, e.target.value)} {...a11y}>
         <option value="">--</option>
         {pairs.map(([val, label]) => <option key={val} value={val}>{label}</option>)}
       </select>
@@ -287,7 +73,7 @@ function FieldInput({ field, value, onChange, lang }) {
   }
   if (meta.type === "enum") {
     return (
-      <select className="field-input" value={value} onChange={(e) => onChange(meta.id, e.target.value)}>
+      <select className={cls} disabled={disabled} value={value} onChange={(e) => onChange(meta.id, e.target.value)} {...a11y}>
         <option value="">--</option>
         {meta.allowed.map((v) => <option key={v} value={String(v)}>{String(v)}</option>)}
       </select>
@@ -296,22 +82,26 @@ function FieldInput({ field, value, onChange, lang }) {
   if (meta.type === "number") {
     return (
       <input
-        className="field-input"
+        className={cls}
+        disabled={disabled}
         type="number"
         min={meta.min}
         max={meta.max}
         step={meta.step || "any"}
         value={value}
         onChange={(e) => onChange(meta.id, e.target.value)}
+        {...a11y}
       />
     );
   }
   return (
     <input
-      className="field-input"
+      className={cls}
+      disabled={disabled}
       type="text"
       value={value}
       onChange={(e) => onChange(meta.id, e.target.value)}
+      {...a11y}
     />
   );
 }
@@ -326,51 +116,73 @@ function MissingFieldsForm({ fields, lang, onSubmit, disabled }) {
     fields.forEach((f) => { init[typeof f === "object" ? f.id : f] = ""; });
     return init;
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (id, val) => {
     setValues((prev) => ({ ...prev, [id]: val }));
+    if (errors[id]) setErrors((prev) => { const next = { ...prev }; delete next[id]; return next; });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const nextErrors = {};
     const parsed = {};
     let anyFilled = false;
     fields.forEach((field) => {
       const meta = resolveFieldMeta(field);
       const raw = values[meta.id]?.trim();
       if (!raw) return;
+      const err = validateField(field, raw, lang);
+      if (err) { nextErrors[meta.id] = err; return; }
       anyFilled = true;
       if (meta.type === "boolean") parsed[meta.id] = raw === "true";
       else if (meta.type === "number") parsed[meta.id] = Number(raw);
       else parsed[meta.id] = raw;
     });
-    if (anyFilled) onSubmit(parsed);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length === 0 && anyFilled) onSubmit(parsed);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key !== "Enter") return;
+    if (e.target.tagName === "SELECT") {
+      e.preventDefault();
+      e.currentTarget.requestSubmit();
+    }
   };
 
   return (
     <div className="msg bot">
       <p>{t.missingFieldsIntro}</p>
-      <form className="missing-fields-form" onSubmit={handleSubmit}>
+      <form className="missing-fields-form" onSubmit={handleSubmit} onKeyDown={handleKeyDown} noValidate>
         <div className="missing-fields-grid">
           {fields.map((field, i) => {
             const id = typeof field === "object" ? field.id : field;
-            const label = typeof field === "object"
-              ? (field.description || getFieldLabel(field.id, lang))
-              : getFieldLabel(field, lang);
+            const fieldId = typeof field === "object" ? field.id : field;
+            const localLabel = fieldLabels[fieldId]?.[lang];
+            const label = localLabel
+              || (typeof field === "object" ? field.description : null)
+              || getFieldLabel(fieldId, lang);
             const lawRef = typeof field === "object" ? field.law_reference : null;
+            const error = errors[id];
             return (
               <div className="field-group" key={i}>
                 <label className="field-label">
                   {label}
                   {lawRef && <span className="law-ref">({lawRef})</span>}
                 </label>
-                <FieldInput field={field} value={values[id]} onChange={handleChange} lang={lang} />
+                <FieldInput field={field} value={values[id]} onChange={handleChange} lang={lang} invalid={Boolean(error)} disabled={disabled} ariaLabel={typeof label === "string" ? label : undefined} />
+                {error && <span className="field-error" role="alert">{error}</span>}
               </div>
             );
           })}
         </div>
         <div className="missing-fields-submit">
-          <button type="submit" disabled={disabled}>{getSubmitLabel(lang)}</button>
+          <button type="submit" disabled={disabled} aria-busy={disabled || undefined}>
+            {disabled
+              ? <span className="btn-loading" aria-label={getSubmitLabel(lang)}><span></span><span></span><span></span></span>
+              : getSubmitLabel(lang)}
+          </button>
         </div>
       </form>
     </div>
@@ -380,18 +192,6 @@ function MissingFieldsForm({ fields, lang, onSubmit, disabled }) {
 // ============================================================
 // LEGAL ANSWER
 // ============================================================
-function formatComputedValue(value, variable, t) {
-  if (typeof value === "boolean") return value ? t.yes : t.no;
-  if (typeof value === "number") {
-    const formatted = Number.isInteger(value)
-      ? value.toLocaleString()
-      : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
-    const monetary = /amount|contribution|salary|income|wage|tax|chf|franc|betrag|beitrag|revenu|salaire|reddito/i;
-    return monetary.test(variable) ? `CHF ${formatted}` : formatted;
-  }
-  return String(value);
-}
-
 function LegalAnswer({ data, lang }) {
   const t = i18n[lang] || i18n.en;
   const syllogism = parseSyllogism(data.syllogistic_reasoning);
@@ -467,39 +267,6 @@ function LegalAnswer({ data, lang }) {
       )}
     </div>
   );
-}
-
-function composeNaturalReply({ syllogism, applicableLaws, articleToComputed, executionFailed, t }) {
-  const applicableBlocks = syllogism.filter((s) => s.article && applicableLaws.some((l) => s.article.startsWith(l)));
-  const excludedBlocks = syllogism.filter((s) => s.article && !applicableLaws.some((l) => s.article.startsWith(l)));
-  const paragraphs = [];
-  const sentences = [];
-  applicableBlocks.forEach((block, i) => {
-    const minor = block.premises.find((p) => p.type === "minor");
-    const conclusion = block.premises.find((p) => p.type === "conclusion");
-    const articleRef = applicableLaws.find((l) => block.article.startsWith(l)) || block.article;
-    const computed = articleToComputed[articleRef];
-    if (i === 0 && minor) sentences.push(stripTrailingPeriod(minor.text) + ".");
-    if (conclusion) {
-      let s = stripTrailingPeriod(conclusion.text);
-      if (computed && typeof computed.value === "number" && computed.variable.includes("contribution")) {
-        const amount = computed.value.toLocaleString(undefined, { maximumFractionDigits: 2 });
-        s += ` ${t.concretely.toLowerCase()} ${amount} ${t.chf} ${t.perMonth}`;
-      }
-      sentences.push(s + ".");
-    }
-  });
-  if (sentences.length) paragraphs.push(sentences.join(" "));
-  if (excludedBlocks.length) {
-    const es = excludedBlocks.map((b) => { const c = b.premises.find((p) => p.type === "conclusion"); return c ? stripTrailingPeriod(c.text) + "." : null; }).filter(Boolean);
-    if (es.length) paragraphs.push(`${t.alsoConsidered} ${es.join(" ")}`);
-  }
-  if (executionFailed) paragraphs.push(t.execFailNote);
-  return paragraphs;
-}
-
-function stripTrailingPeriod(s) {
-  return s ? s.replace(/[.\s]+$/, "") : s;
 }
 
 // ============================================================
@@ -595,8 +362,8 @@ function App() {
         <div className="brand">
           <div className="swiss-mark" aria-hidden="true"></div>
           <div className="brand-text">
-            <div className="title">CLAWDE.IA</div>
-            <div className="sub"></div>
+            <div className="title">Fedlex Assistant</div>
+            <div className="sub">Swiss Law Chatbot</div>
           </div>
           <div className="brand-divider"></div>
           <img src={openLegalLabLogo} alt="Open Legal Lab" className="partner-logo" />
@@ -645,7 +412,7 @@ function App() {
         )}
 
         {view === "chat" && (
-          <section className="chat-view">
+          <section className="chat-view visible">
             <div className="chat-header">
               <div className="label">Fedlex <em>Conversation</em></div>
               <div className="chat-header-actions">
@@ -658,7 +425,7 @@ function App() {
               </div>
             </div>
 
-            <div className="chat-box" ref={chatBoxRef}>
+            <div className="chat-box" ref={chatBoxRef} role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation">
               {messages.map((msg, i) => {
                 if (msg.type === "user") return <div key={i} className="msg user">{msg.text}</div>;
                 if (msg.type === "answer") return <LegalAnswer key={i} data={msg.data} lang={lang} />;
@@ -678,10 +445,16 @@ function App() {
                   );
                 }
                 if (msg.type === "bot_error") return <div key={i} className="msg bot"><p>{msg.text}</p></div>;
-                if (msg.type === "error") return <div key={i} className="exec-error">{msg.text}</div>;
+                if (msg.type === "error") return <div key={i} className="exec-error" role="alert">{msg.text}</div>;
                 return null;
               })}
-              {isLoading && <div className="typing"><span></span><span></span><span></span></div>}
+              {isLoading && (
+                <div className="typing" role="status" aria-label={(i18n[lang] || i18n.en).loading}>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </div>
+              )}
             </div>
 
             <div className="chat-input-area">
