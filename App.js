@@ -595,8 +595,8 @@ function App() {
         <div className="brand">
           <div className="swiss-mark" aria-hidden="true"></div>
           <div className="brand-text">
-            <div className="title">Fedlex Assistant</div>
-            <div className="sub">Swiss Law Chatbot</div>
+            <div className="title">CLAWDE.IA</div>
+            <div className="sub"></div>
           </div>
           <div className="brand-divider"></div>
           <img src={openLegalLabLogo} alt="Open Legal Lab" className="partner-logo" />
